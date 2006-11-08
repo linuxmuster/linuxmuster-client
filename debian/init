@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+# linuxmuster debian client configuration script
+#
+# schmitt@lmz-bw.de
+#
+
+# read default variables
+. /usr/share/linuxmuster-clientconfig/config/dist.conf || exit 1
+
+
+check_mountpoints() {
+
+	echo "linuxmuster-clientconfig: checking mountpoints ..."
+		
+	# tasks
+	[ -d "$TASKSCACHE" ] || mkdir -p $TASKSCACHE
+	chown $ADMINISTRATOR:$TEACHERSGROUP $TASKSCACHE
+	chmod 1775 $TASKSCACHE
+		
+	# shares
+	[ -d "$SHAREHOME" ] || mkdir -p $SHAREHOME
+	chown $ADMINISTRATOR:$DOMADMINS $SHAREHOME
+	chmod 1775 $SHAREHOME
+		
+	# students homes
+	[ -d "$STUDENTSHOME" ] || mkdir -p $STUDENTSHOME
+	chown $ADMINISTRATOR:$DOMADMINS $STUDENTSHOME
+	chmod 1775 $STUDENTSHOME
+		
+	# workstations homes
+	[ -d "$WSHOME" ] || mkdir -p $WSHOME
+	chown $ADMINISTRATOR:$DOMADMINS $WSHOME
+	chmod 775 $WSHOME
+		
+	# teachers homes
+	[ -d "$TEACHERSHOME" ] || mkdir -p $TEACHERSHOME
+	chown $ADMINISTRATOR:$DOMADMINS $TEACHERSHOME
+	chmod 775 $TEACHERSHOME
+		
+	# administrators homes
+	[ -d "$ADMINSHOME" ] || mkdir -p $ADMINSHOME
+	chown root:root $ADMINSHOME
+	chmod 755 $ADMINSHOME
+		
+	# access to backup folder, only for administrator
+	[ -d "$BACKUPMNTPOINT" ] || mkdir -p $BACKUPMNTPOINT
+	chown root:root $BACKUPMNTPOINT
+	chmod 755 $BACKUPMNTPOINT
+
+} # check_mountpoints
+
+
+cleaning_homes() {
+
+	echo "linuxmuster-clientconfig: cleaning homes ..."
+
+	for i in $ADMINSHOME $TEACHERSHOME $WSHOME $STUDENTSHOME; do
+
+		if ! grep -q $i /etc/mtab; then
+			rm -rf $i/* &> /dev/null
+		fi
+
+	done
+
+} # cleaning_homes
+
+
+case $1 in
+	
+	start)
+		check_mountpoints
+		cleaning_homes		
+		;;
+
+	stop)
+		cleaning_homes
+		;;
+
+	*)
+		;;
+
+esac
+ 

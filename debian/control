@@ -1,0 +1,14 @@
+Source: linuxmuster-clientconfig
+Section: debian-linuxmuster
+Priority: optional
+Maintainer: Thomas Schmitt <schmitt@lmz-bw.de>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.0
+
+Package: linuxmuster-clientconfig
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, libpam-ldap, libnss-ldap, nscd, libpam-mount, rsync, smbfs
+Conflicts: linuxmuster-base
+Description: Linux-Musterloesung client configuration scripts
+ This package provides configuration scripts for debian-based clients
+ to connect them to Linux-Musterloesung.

@@ -1,0 +1,180 @@
+Integration von Linux-Clients in LML 3.0
+----------------------------------------
+
+
+1. Ubuntu 6.06.1 LTS "Dapper Drake"
+
+
+1.1 Installation
+
+Voraussetzung für die Installation ist linuxmuster-base >= 0.9-44 auf dem
+Musterlösungsserver.
+
+Die im folgenden geschilderte Clientkonfiguration wird durch das Paket
+linuxmuster-clientconfig automatisch erledigt. Dazu muss in /etc/apt/sources.list
+die folgende Quelle ergänzt werden:
+deb http://mine.support-netz.de/ubuntu ./
+
+Danach kann mit zunächst
+# aptitude update
+und anschließendem
+# aptitude install linuxmuster-clientconfig
+das Paket installiert werden.
+Abhängige Pakete (libpam-ldap, libnss-ldap, nscd, libpam-mount, smbfs)
+werden automatisch mitinstalliert.
+
+Bei der Installation von libpam-ldap werden abgefragt
+(Server-IP und search base müssen entsprechend angepasst werden):
+
+LDAP Server Host: 10.16.1.1
+distinguished name of the search base: dc=linuxmuster,dc=local (Bsp.)
+LDAP version to use: 3
+Make local root database admin: nein
+Database requires logging in: nein
+
+Nach der Paketinstallation ist der Client einsatzbereit, vorausgesetzt
+er wurde zuvor schon in das Musterlösungsnetz integriert.
+
+Im Einzelnen nimmt linuxmuster-clientconfig folgende Anpassungen vor:
+
+
+1.2 Client-Anpassungen
+
+   /etc/nsswitch.conf:
+
+   	passwd:	compat ldap
+   	group:	compat ldap
+
+   /etc/pam.d/common-account:
+
+   	account    sufficient    pam_ldap.so
+   	account    sufficient    pam_unix.so nullok try_first_pass
+   	account    required      pam_deny.so
+
+   /etc/pam.d/common-auth:
+
+   	auth [success=1 default=ignore] pam_unix.so
+   	auth required pam_ldap.so use_first_pass
+   	auth required pam_permit.so
+
+   /etc/pam.d/common-password:
+
+   	password [success=1 default=ignore] pam_unix.so nullok obscure min=4 max=12 md5
+   	password required pam_ldap.so
+   	password required pam_permit.so
+
+   /etc/pam.d/common-session:
+
+   	session         required        pam_ldap.so
+
+   /etc/security/pam_mount.conf:
+
+   	# global options
+   	debug 1
+   	mkmountpoint 1
+   	lsof /usr/sbin/lsof %(MNTPT)
+   	fsck /sbin/fsck -p %(FSCKTARGET)
+   	cifsmount /bin/mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o "username=%(USER)%(before=\",\" OPTIONS)"
+   	umount /etc/linuxmuster-clientconfig/logout %(USER) %(MNTPT)
+   	mntagain /bin/mount --bind %(PREVMNTPT) %(MNTPT)
+   	mntcheck /bin/mount # For BSD's (don't have /etc/mtab)
+   	pmvarrun /usr/sbin/pmvarrun -u %(USER) -d -o %(OPERATION)
+
+   	#------------------------------------------------------------------------------
+   	# Volumes that will be mounted when user triggers the pam_mount module
+   	volume * cifs 10.16.1.1 & ~ directio - -
+   	volume * cifs 10.16.1.1 students /home/students directio - -
+   	volume * cifs 10.16.1.1 shares /home/share directio - -
+   	volume * cifs 10.16.1.1 tasks /var/cache/sophomorix/tasks directio - -
+   	volume * cifs 10.16.1.1 backup /media/backup directio - -
+
+   In /etc/pam.d/gdm, /etc/pam.d/kdm und /etc/pam.d/login
+   wird nach der Zeile mit
+   @include common-session
+   die Zeile
+   @include common-pammount
+   eingefügt.
+
+
+1.3 KDE/Gnome
+
+    KDE kommt mit einem per cifs eingehängten Homeverzeichnis
+    nicht klar. KDE-Home, KDE-Desktop und die FIFO-Dateien müssen
+    nach /tmp umgeleitet werden. Außerdem muss man noch sicher stellen,
+    dass Desktop und KDE-Benutzereinstellungen beim An- und Abmelden
+    des Benutzers synchronisiert werden.
+    Gnome hat die Probleme mit dem cifs-Dateisystem nicht. Dessen
+    Konfigurationsdateien müssen also nicht umgeleitet und synchronisiert
+    werden.
+
+    Zwei Skripte stellen die angesprochene Funktionalität zur Verfügung.
+
+    - /etc/linuxmuster-clientconfig/login:
+      wird von /etc/profile (KDE) bzw. /etc/gdm/PostLogin/Default (Gnome)
+      eingelesen, um vor der Benutzeranmeldung die temporäre
+      Konfiguration zur Verfügung zu stellen.
+
+    - /etc/linuxmuster-clientconfig/logout:
+      wird von pammount aufgerufen (s.a. 1.2), wenn sich der Benutzer abmeldet.
+      Die temporäre Konfiguration der Benutzers wird ins Homeverzeichnis
+      gesichert.
+
+
+1.4 Mountpoints
+
+Der Zugriff auf Tausch- und Vorlagenverzeichnisse für Schüler und Lehrer,
+sowie der Zugriff auf die Schülerhomes für Lehrer und administrator ist
+über Links im Home des Benutzers realisiert. Damit diese Links auf dem
+Linuxclient funktionieren müssen die entsprechenden Serververzeichnisse
+ebenfalls per cifs auf dem Client eingehängt werden (s.a. 1.2).
+
+Das Initskript /etc/init.d/linuxmuster-clientconfig stellt sicher, dass
+diese Mountpoints erstellt werden.
+
+
+1.5 Shell für User
+
+Damit Lehrer und Schüler auf dem Client eine Shell zur Verfügung haben,
+muss der administrator die entsprechende Option in der Schulkonsole
+unter "Einstellungen" vor dem Anlegen der Benutzer aktivieren.
+
+Nachträgliches Aktivieren der Shell für einzelne Benutzer geschieht als
+root auf der Serverkonsole mit dem Befehl
+# smbldap-usermod -s /bin/bash <username>
+
+
+1.6 KDE auf Version 3.5.5 aktualisieren
+
+Dazu folgende Paket-Quelle in /etc/apt/sources.list hinzufügen:
+
+deb ftp://bolugftp.uni-bonn.de/pub/kde/stable/3.5.5/kubuntu dapper main
+
+(Siehe http://www.kubuntu.org)
+
+
+1.7 Fazit
+
+Benutzer können sich in KDE oder Gnome einloggen und finden ihre auf dem Server
+abgelegten Dateien und Tauschordner im Homeverzeichnis.
+Benutzer-Einstellungen werden im Homeverzeichnis dauerhaft gespeichert und
+stehen somit auf allen Arbeitsstationen im Schulnetzwerk zur Verfügung.
+
+Dank cifs finden die Benutzer in ihrem Heimatverzeichnis ein unix-Dateisystem
+vor, mit sie vollwertig arbeiten können. Alle Benutzer-IDs und Dateiberechtigungen
+werden transparent vom Serverdateisystem übernommen. Es können auch Symlinks
+erstellt werden.
+
+Schüler können lokal als root arbeiten, ohne dass Benutzerdaten auf dem Server
+kompromittiert werden können. Auf den per cifs gemounteten Serververzeichnissen
+hat der lokale root keine Superuserrechte und zum Mounten eines Benutzerheimat-
+verzeichnisses wird immer das jeweilige Benutzer-Passwort benötigt.
+
+
+2. openSuSE 10.1
+
+   ToDo
+
+
+04.11.2006
+Thomas Schmitt
+<schmitt@lmz-bw.de>

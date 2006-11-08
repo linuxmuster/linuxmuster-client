@@ -1,0 +1,33 @@
+#!/usr/bin/perl
+# Debconf configuration script for PADL-ldap tools.
+# By Sami Haahtinen <ressu@debian.org>
+# hacked for linuxmuster by Thomas Schmitt <schmitt@lmz-bw.de>
+#
+
+use Debconf::Client::ConfModule ':all';
+version('2.0');
+
+# Not yet.. i'll prolly fix this later...
+# my $capb=capb('backup');
+
+my @ret;
+my @current_config;
+
+read_and_input('shared/ldapns/ldap-server', 'uri', 'critical');
+read_and_input('shared/ldapns/base-dn', 'base', 'critical');
+$ret = go();  # yeah, we don't need that.. but in case we sometime do
+
+sub read_and_input
+{
+	my ($debconf_name, $conffile_name, $priority) = @_;
+	$priority = 'medium' unless $priority;
+
+	my @valuelist = grep(/^$conffile_name\s/, @current_config);
+	if (@valuelist) {
+		my $value = pop(@valuelist);
+		chomp($value);
+		$value =~ s/^$conffile_name\s+//;
+		set($debconf_name, $value);
+	}
+	input($priority, $debconf_name);
+}

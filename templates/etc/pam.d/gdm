@@ -1,0 +1,9 @@
+#%PAM-1.0
+auth	requisite	pam_nologin.so
+auth	required	pam_env.so
+@include common-auth
+@include common-account
+session	required	pam_limits.so
+@include common-session
+@include common-password
+@include common-pammount

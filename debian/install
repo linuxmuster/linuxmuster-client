@@ -1,0 +1,3 @@
+etc/*			etc/linuxmuster-clientconfig/
+templates/*		var/lib/linuxmuster-clientconfig/templates/
+config/*		usr/share/linuxmuster-clientconfig/config/

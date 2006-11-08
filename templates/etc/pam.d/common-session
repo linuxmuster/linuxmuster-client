@@ -1,0 +1,14 @@
+# Do not change this file! It will be overwritten!
+# This configuration file was automatically created by sophomorix-setup-pgldap
+# Last Modification: 2006-10-03_20-43-47
+# $Id: common-session.template,v 1.3 2006/05/08 07:53:40 jeffbeck Exp $
+#
+# /etc/pam.d/common-session - session-related modules common to all services
+#
+# This file is included from other service-specific PAM config files,
+# and should contain a list of modules that define tasks to be performed
+# at the start and end of sessions of *any* kind (both interactive and
+# non-interactive).  The default is pam_unix.
+#
+#session	required	pam_unix.so
+session         required        pam_ldap.so
