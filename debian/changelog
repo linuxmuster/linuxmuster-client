@@ -1,3 +1,10 @@
+linuxmuster-clientconfig (0.2-1) testing; urgency=low
+
+  * optimized cifs mount options
+  * added share mount to pam_mount.conf template
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Mon, 29 Jan 2007 17:15:01 +0100
+
 linuxmuster-clientconfig (0.1-1) testing; urgency=low
 
   * initial release
