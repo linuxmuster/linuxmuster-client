@@ -1,0 +1,19 @@
+# linuxmuster specific variables
+# don't change this unless you know exactly what you are doing
+# <schmitt@lmz-bw.de>
+
+# should be the same as on the server
+BACKUPMNTPOINT="/media/backup"
+ADMINISTRATOR="administrator"
+PGMADMIN="pgmadmin"
+DOMADMINS="domadmins"
+PRINTERADMINS="printoperators"
+TEACHERSGROUP="teachers"
+ADMINGROUP="administrators"
+ADMINSHOME="/home/$ADMINGROUP"
+TEACHERSHOME="/home/teachers"
+STUDENTSHOME="/home/students"
+WSHOME="/home/workstations"
+SHAREHOME="/home/share"
+ATTICHOME="/home/attic"
+TASKSCACHE="/var/cache/sophomorix/tasks"

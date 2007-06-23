@@ -1,0 +1,18 @@
+# supplemental profile for linuxmuster client
+
+# no redirection for local users
+if test -n "$USER" && ! grep -q ^${USER}: /etc/passwd; then
+
+	# Redirects KDE Home to /tmp
+	export KDEHOME=/tmp/.kde_${USER}
+
+	# user's desktop has also to be in /tmp
+	export DESKTOP=/tmp/Desktop_${USER}
+
+	# Redirects access token file for dcopserver to /tmp
+	export ICEAUTHORITY=/tmp/${USER}_ICEauthority_${HOSTNAME}
+
+	# Redirects the file "how to access the dcopserver" to /tmp
+	export DCOPAUTHORITY=/tmp/${USER}_DCOPserver-${HOSTNAME}_on_${DISPLAY}
+
+fi

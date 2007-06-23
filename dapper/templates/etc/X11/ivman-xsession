@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+       echo "Usage: $0 <command>" >&2
+       echo " Runs ivman as a daemon until <command> finishes."
+       exit 1
+fi
+
+ivman --nofork &
+PID=$!
+echo "ivman started ($PID)"
+
+trap "kill $PID && echo 'ivman killed'" ALRM HUP INT PIPE PROF TERM USR1 USR2 VTALRM ABRT EXIT
+
+eval "$@"

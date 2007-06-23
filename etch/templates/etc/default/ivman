@@ -1,0 +1,3 @@
+# start ivman at boot time? yes|no
+# for linuxmuster this should be no
+START_IVMAN=no

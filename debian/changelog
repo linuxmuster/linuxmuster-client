@@ -1,3 +1,80 @@
+linuxmuster-client (0.7-2) testing; urgency=low
+
+  * syncing home permissions to server
+  * added /home/attic
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sat, 23 Jun 2007 12:50:10 +0200
+
+linuxmuster-client (0.7-1) testing; urgency=low
+
+  * added feisty support (experimental)
+  * added ldap administrator to sudoers
+  * added printoperators group dto cupsd system groups
+  * adding cupsys to shadow group
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Tue, 20 Mar 2007 20:25:26 +0100
+
+linuxmuster-client (0.6-3) testing; urgency=low
+
+  * fixed etch support
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Mon, 26 Feb 2007 20:33:49 +0100
+
+linuxmuster-client (0.6-2) testing; urgency=low
+
+  * added ivman instead of usbmount to package dependencies
+  * added ivman configuration
+  * added etch and knoppix to supported distros
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sun, 25 Feb 2007 21:54:55 +0100
+
+linuxmuster-client (0.6-1) testing; urgency=low
+
+  * renamed package to linuxmuster-client
+  * admin users administrator and pgmadmin will go in local admin groups
+  * caching user's homedir to not query the ldap 10 times
+  * reworked mount and umount skripts
+  * moved supplemental group handling for ldap users to pam_group module
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Fri, 23 Feb 2007 16:22:37 +0100
+
+linuxmuster-clientconfig (0.5-2) testing; urgency=low
+
+  * removing user from supplementary groups when unmounting
+  * cleaning tmp dirs when user logs out
+  * added host specific xorg.conf handling to init scripts
+  * fixed path to lsof in pam_mount.conf
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Thu, 22 Feb 2007 21:14:49 +0100
+
+linuxmuster-clientconfig (0.5-1) testing; urgency=low
+
+  * added usbmount to package dependencies
+  * added edgy to supported distros
+  * preventing init script from starting and stopping on package upgrade or install
+  * added linuxmuster-hostname init script to /etc/rcS.d with number 40,
+    sets the hostname for dhclient.conf before networking starts
+  * adding linuxmuster-hostname init script to /etc/rcS.d with number 40,
+    sets the hostname for dhclient.conf before networking starts
+  * adding local system group nvram during postinst if it does not exist,
+    to prevent udev from ldap search for this group
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Wed, 21 Feb 2007 18:50:55 +0100
+
+linuxmuster-clientconfig (0.4-1) testing; urgency=low
+
+  * moved scripts from /etc to /usr/share/linuxmuster-clientconfig
+  * reworked login script to a mount wrapper for pam_mount
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sat, 03 Feb 2007 12:20:48 +0100
+
+linuxmuster-clientconfig (0.3-1) testing; urgency=low
+
+  * added hal.conf to allow group plugdev automount usb devices
+  * putting user into supplementary local groups that he can access hardware
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Fri, 02 Feb 2007 17:37:54 +0100
+
 linuxmuster-clientconfig (0.2-1) testing; urgency=low
 
   * optimized cifs mount options

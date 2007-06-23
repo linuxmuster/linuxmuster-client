@@ -11,14 +11,14 @@ Voraussetzung für die Installation ist linuxmuster-base >= 0.9-44 auf dem
 Musterlösungsserver.
 
 Die im folgenden geschilderte Clientkonfiguration wird durch das Paket
-linuxmuster-clientconfig automatisch erledigt. Dazu muss in /etc/apt/sources.list
+linuxmuster-client automatisch erledigt. Dazu muss in /etc/apt/sources.list
 die folgende Quelle ergänzt werden:
 deb http://mine.support-netz.de/ubuntu ./
 
 Danach kann mit zunächst
 # aptitude update
 und anschließendem
-# aptitude install linuxmuster-clientconfig
+# aptitude install linuxmuster-client
 das Paket installiert werden.
 Abhängige Pakete (libpam-ldap, libnss-ldap, nscd, libpam-mount, smbfs)
 werden automatisch mitinstalliert.

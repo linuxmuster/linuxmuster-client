@@ -1,3 +1,8 @@
-etc/*			etc/linuxmuster-clientconfig/
-templates/*		var/lib/linuxmuster-clientconfig/templates/
-config/*		usr/share/linuxmuster-clientconfig/config/
+common/*			var/lib/linuxmuster-client/common/
+dapper/*			var/lib/linuxmuster-client/dapper/
+edgy/*				var/lib/linuxmuster-client/edgy/
+feisty/*			var/lib/linuxmuster-client/feisty/
+etch/*				var/lib/linuxmuster-client/etch/
+knoppix/*			var/lib/linuxmuster-client/knoppix/
+share/*				usr/share/linuxmuster-client/
+debian/linuxmuster-hostname	etc/init.d/

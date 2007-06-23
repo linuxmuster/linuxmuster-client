@@ -69,8 +69,8 @@ install: build
 
 	# Add here commands to install the package.
 	dh_install
-	rm -rf `find debian/linuxmuster-clientconfig -name .svn`
-	rm -f `find debian/linuxmuster-clientconfig -name .directory`
+	rm -rf `find debian/linuxmuster-client -name .svn`
+	rm -f `find debian/linuxmuster-client -name .directory`
 
 # Build architecture-independent files here.
 # Pass -i to all debhelper commands in this target to reduce clutter.
@@ -86,7 +86,7 @@ binary-indep: build install
 #	dh_installemacsen -i
 #	dh_installpam -i
 #	dh_installmime -i
-	dh_installinit -i
+	dh_installinit -i --no-start
 #	dh_installcron -i
 #	dh_installman -i
 #	dh_installinfo -i

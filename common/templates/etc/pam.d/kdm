@@ -1,0 +1,17 @@
+#
+# /etc/pam.d/kdm - specify the PAM behaviour of kdm
+#
+
+# The standard Unix authentication modules, used with
+# NIS (man nsswitch) as well as normal /etc/passwd and
+# /etc/shadow entries.
+@include common-auth
+auth       optional   pam_group.so
+@include common-account
+@include common-password
+@include common-session
+@include common-pammount
+
+auth       required     pam_nologin.so
+auth       required     pam_env.so
+session    required     pam_limits.so

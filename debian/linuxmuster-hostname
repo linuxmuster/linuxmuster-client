@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# writes hostname in dhclient config
+# Thomas Schmitt <schmitt@lmz-bw.de>
+# 21.02.2007
+#
+
+# read hostname
+clientname=`cat /etc/hostname`
+[ -z "$clientname" ] && exit 0
+
+DHCLIENTCONF=/etc/dhcp3/dhclient.conf
+
+case $1 in
+
+	start)
+		if [ -e "$DHCLIENTCONF" ]; then
+			# backup original dhclient.conf
+			[ -e "$DHCLIENTCONF.dist" ] || cp $DHCLIENTCONF $DHCLIENTCONF.dist
+
+			# patch dhclient.conf with hostname
+			echo -n " * linuxmuster-client: setting up dhcp hostname for $clientname"
+			if grep -q "^send host-name" $DHCLIENTCONF; then
+				sed -e "s/^send host-name.*/send host-name \"$clientname\";/" $DHCLIENTCONF > $DHCLIENTCONF.tmp
+				mv $DHCLIENTCONF.tmp $DHCLIENTCONF
+			else
+				echo "send host-name \"$clientname\";" >> $DHCLIENTCONF
+			fi
+			echo .
+		fi
+
+		# copy host specific xorg.conf
+		if [ -f "/etc/X11/xorg.conf.$clientname" ]; then
+			echo -n " * linuxmuster-client: setting up Xorg.conf for $clientname"
+			cp /etc/X11/xorg.conf /etc/X11/xorg.conf.default
+			cp /etc/X11/xorg.conf.$clientname /etc/X11/xorg.conf
+			echo .
+		fi
+
+		;;
+
+	*)
+		;;
+
+esac
+
+exit 0

@@ -1,0 +1,17 @@
+# $Id:$
+# In order to activate the session ivman at X session launch
+# simply place use-session-ivman into your /etc/X11/Xsession.options file
+#
+
+STARTIVMAN=
+IVMANLAUNCH=/etc/X11/ivman-xsession
+
+if grep -qs ^use-session-ivman "$OPTIONFILE"; then
+ if [ -x "$IVMANLAUNCH" ]; then
+   STARTIVMAN=yes
+ fi
+fi
+
+if [ -n "$STARTIVMAN" ]; then
+ STARTUP="$IVMANLAUNCH $STARTUP"
+fi

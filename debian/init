@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # linuxmuster debian client configuration script
 #
@@ -6,56 +6,65 @@
 #
 
 # read default variables
-. /usr/share/linuxmuster-clientconfig/config/dist.conf || exit 1
+. /usr/share/linuxmuster-client/config || exit 1
 
+# read hostname
+clientname=`cat /etc/hostname`
 
 check_mountpoints() {
 
-	echo "linuxmuster-clientconfig: checking mountpoints ..."
-		
-	# tasks
-	[ -d "$TASKSCACHE" ] || mkdir -p $TASKSCACHE
-	chown $ADMINISTRATOR:$TEACHERSGROUP $TASKSCACHE
-	chmod 1775 $TASKSCACHE
-		
-	# shares
-	[ -d "$SHAREHOME" ] || mkdir -p $SHAREHOME
-	chown $ADMINISTRATOR:$DOMADMINS $SHAREHOME
-	chmod 1775 $SHAREHOME
-		
-	# students homes
-	[ -d "$STUDENTSHOME" ] || mkdir -p $STUDENTSHOME
-	chown $ADMINISTRATOR:$DOMADMINS $STUDENTSHOME
-	chmod 1775 $STUDENTSHOME
-		
-	# workstations homes
-	[ -d "$WSHOME" ] || mkdir -p $WSHOME
-	chown $ADMINISTRATOR:$DOMADMINS $WSHOME
-	chmod 775 $WSHOME
-		
-	# teachers homes
-	[ -d "$TEACHERSHOME" ] || mkdir -p $TEACHERSHOME
-	chown $ADMINISTRATOR:$DOMADMINS $TEACHERSHOME
-	chmod 775 $TEACHERSHOME
+	echo -n "linuxmuster-client: checking mountpoints"
 		
 	# administrators homes
 	[ -d "$ADMINSHOME" ] || mkdir -p $ADMINSHOME
 	chown root:root $ADMINSHOME
-	chmod 755 $ADMINSHOME
+	chmod 771 $ADMINSHOME
+		
+	# teachers homes
+	[ -d "$TEACHERSHOME" ] || mkdir -p $TEACHERSHOME
+	chown $ADMINISTRATOR:$TEACHERSGROUP $TEACHERSHOME
+	chmod 751 $TEACHERSHOME
+		
+	# students homes
+	[ -d "$STUDENTSHOME" ] || mkdir -p $STUDENTSHOME
+	chown root:root $STUDENTSHOME
+	chmod 775 $STUDENTSHOME
+		
+	# workstations homes
+	[ -d "$WSHOME" ] || mkdir -p $WSHOME
+	chown root:root $WSHOME
+	chmod 775 $WSHOME
+		
+	# attic
+	[ -d "$ATTICHOME" ] || mkdir -p $ATTICHOME
+	chown root:root $ATTICHOME
+	chmod 775 $ATTICHOME
+		
+	# shares
+	[ -d "$SHAREHOME" ] || mkdir -p $SHAREHOME
+	chown root:$DOMADMINS $SHAREHOME
+	chmod 771 $SHAREHOME
+		
+	# tasks
+	[ -d "$TASKSCACHE" ] || mkdir -p $TASKSCACHE
+	chown root:root $TASKSCACHE
+	chmod 1771 $TASKSCACHE
 		
 	# access to backup folder, only for administrator
 	[ -d "$BACKUPMNTPOINT" ] || mkdir -p $BACKUPMNTPOINT
 	chown root:root $BACKUPMNTPOINT
 	chmod 755 $BACKUPMNTPOINT
 
+	echo .
+
 } # check_mountpoints
 
 
 cleaning_homes() {
 
-	echo "linuxmuster-clientconfig: cleaning homes ..."
+	echo -n "linuxmuster-client: cleaning homes ..."
 
-	for i in $ADMINSHOME $TEACHERSHOME $WSHOME $STUDENTSHOME; do
+	for i in $ADMINSHOME $TEACHERSHOME $WSHOME $STUDENTSHOME $SHAREHOME $ATTICHOME; do
 
 		if ! grep -q $i /etc/mtab; then
 			rm -rf $i/* &> /dev/null
@@ -63,22 +72,37 @@ cleaning_homes() {
 
 	done
 
+	echo .
+
 } # cleaning_homes
+
+
+restore_xorg() {
+
+	if [ -f /etc/X11/xorg.conf.default ]; then
+		echo -n "linuxmuster-client: restoring default xorg.conf"
+		mv /etc/X11/xorg.conf.default /etc/X11/xorg.conf
+		echo .
+	fi
+
+}
 
 
 case $1 in
 	
 	start)
 		check_mountpoints
-		cleaning_homes		
+		cleaning_homes
 		;;
 
 	stop)
 		cleaning_homes
+		restore_xorg
 		;;
 
 	*)
 		;;
 
 esac
- 
+
+exit 0
