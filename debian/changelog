@@ -1,3 +1,9 @@
+linuxmuster-client (0.8.0-1) testing; urgency=low
+
+  * fixed feisty entry in supported_distros
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sat, 23 Jun 2007 12:50:10 +0200
+
 linuxmuster-client (0.7-2) testing; urgency=low
 
   * syncing home permissions to server
