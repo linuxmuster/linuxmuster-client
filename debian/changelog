@@ -1,8 +1,26 @@
+linuxmuster-client (0.8.2-2) testing; urgency=low
+
+  * added gutsy specific template for /etc/ldap.conf
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Mon, 17 Sep 2007 22:23:41 +0200
+
+linuxmuster-client (0.8.2-1) testing; urgency=low
+
+  * added experimental gutsy support
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Mon, 17 Sep 2007 20:12:30 +0200
+
+linuxmuster-client (0.8.1-1) testing; urgency=low
+
+  * added START_IVMAN variable in ivman init script to prevent start at boot time
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Mon, 17 Sep 2007 16:45:57 +0200
+
 linuxmuster-client (0.8.0-1) testing; urgency=low
 
   * fixed feisty entry in supported_distros
 
- -- Thomas Schmitt <schmitt@lmz-bw.de>  Sat, 23 Jun 2007 12:50:10 +0200
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sat, 28 Jul 2007 15:33:52 +0200
 
 linuxmuster-client (0.7-2) testing; urgency=low
 

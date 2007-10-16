@@ -77,6 +77,10 @@ case "$1" in
 		echo "This is $feisty!"
 		distro=feisty
 		binpath=bin
+	elif grep -q "$gutsy" /etc/issue; then
+		echo "This is $gutsy!"
+		distro=gutsy
+		binpath=bin
 	elif grep -q "$etch" /etc/issue; then
 		binpath=bin
 		if grep -q "$knoppix" /etc/motd; then
