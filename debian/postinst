@@ -27,6 +27,33 @@ case "$1" in
 	. /usr/share/linuxmuster-client/config || exit 1
 	. /usr/share/linuxmuster-client/supported_distros || exit 1
 
+	# check the distribution and do specific stuff
+	binpath=bin
+	cups=cupsys
+	if grep -q "$intrepid" /etc/issue; then
+		echo "This is $intrepid!"
+		distro=intrepid
+		cups=cups
+	elif grep -q "$hardy" /etc/issue; then
+		echo "This is $hardy!"
+		distro=hardy
+	elif grep -q "$etch" /etc/issue; then
+		echo "This is $etch!"
+		distro=etch
+		# adding system groups and users
+		for i in fuse rdma tss; do
+			if ! grep -q ^${i}: /etc/group; then
+				addgroup --system $i
+			fi
+		done
+		if ! grep -q ^tss: /etc/passwd; then
+			adduser --system --no-create-home --ingroup tss --disabled-login tss
+		fi
+	else
+		echo "This distribution is not supported!"
+		exit 1
+	fi
+
 	# sets hostname for dhclient at boot time
 	update-rc.d linuxmuster-hostname start 40 S .
 
@@ -58,35 +85,10 @@ case "$1" in
 	if grep -q ^SystemGroup /etc/cups/cupsd.conf; then
 		if ! grep ^SystemGroup /etc/cups/cupsd.conf | grep -q $PRINTERADMINS; then
 			echo "Adding group $PRINTERADMINS to cupsd system groups ..."
-			sed -e "s/^SystemGroup.*/SystemGroup lpadmin $PRINTERADMINS/" /etc/cups/cupsd.conf > /etc/cups/cupsd.conf.tmp
-			mv /etc/cups/cupsd.conf.tmp /etc/cups/cupsd.conf
-			/etc/init.d/cupsys restart
+			cp /etc/cups/cupsd.conf /etc/cups/cupsd.conf.dpkg-old
+			sed -e "s/^SystemGroup.*/SystemGroup lpadmin $PRINTERADMINS/" /etc/cups/cupsd.conf.dpkg-old > /etc/cups/cupsd.conf
+			/etc/init.d/$cups restart
 		fi
-	fi
-
-	# check the distribution and do specific stuff
-	binpath=bin
-	if grep -q "$intrepid" /etc/issue; then
-		echo "This is $intrepid!"
-		distro=intrepid
-	elif grep -q "$hardy" /etc/issue; then
-		echo "This is $hardy!"
-		distro=hardy
-	elif grep -q "$etch" /etc/issue; then
-		echo "This is $etch!"
-		distro=etch
-		# adding system groups and users
-		for i in fuse rdma tss; do
-			if ! grep -q ^${i}: /etc/group; then
-				addgroup --system $i
-			fi
-		done
-		if ! grep -q ^tss: /etc/passwd; then
-			adduser --system --no-create-home --ingroup tss --disabled-login tss
-		fi
-	else
-		echo "This distribution is not supported!"
-		exit 1
 	fi
 
 	# reading basedn and serverip

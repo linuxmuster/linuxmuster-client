@@ -3,7 +3,7 @@ linuxmuster-client (0.9.3-1) testing; urgency=low
   * removed support for knoppix, dapper, edgy, feisty and gutsy
   * added support for intrepid ibex
 
- -- Thomas Schmitt <schmitt@lmz-bw.de>  Sat, 29 Nov 2008 12:46:28 +0100
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sat, 29 Nov 2008 13:35:36 +0100
 
 linuxmuster-client (0.9.2-1) testing; urgency=low
 
