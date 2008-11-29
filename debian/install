@@ -1,11 +1,6 @@
 common/*			var/lib/linuxmuster-client/common/
-dapper/*			var/lib/linuxmuster-client/dapper/
-edgy/*				var/lib/linuxmuster-client/edgy/
-feisty/*			var/lib/linuxmuster-client/feisty/
-gutsy/*				var/lib/linuxmuster-client/gutsy/
 hardy/*				var/lib/linuxmuster-client/hardy/
 etch/*				var/lib/linuxmuster-client/etch/
-knoppix/*			var/lib/linuxmuster-client/knoppix/
 share/*				usr/share/linuxmuster-client/
 debian/linuxmuster-hostname	etc/init.d/
 

@@ -65,50 +65,24 @@ case "$1" in
 	fi
 
 	# check the distribution and do specific stuff
-	if grep -q "$dapper" /etc/issue; then
-		echo "This is $dapper!"
-		distro=dapper
-		binpath=sbin
-	elif grep -q "$edgy" /etc/issue; then
-		echo "This is $edgy!"
-		distro=edgy
-		binpath=bin
-	elif grep -q "$feisty" /etc/issue; then
-		echo "This is $feisty!"
-		distro=feisty
-		binpath=bin
-	elif grep -q "$gutsy" /etc/issue; then
-		echo "This is $gutsy!"
-		distro=gutsy
-		binpath=bin
+	binpath=bin
+	if grep -q "$intrepid" /etc/issue; then
+		echo "This is $intrepid!"
+		distro=intrepid
 	elif grep -q "$hardy" /etc/issue; then
 		echo "This is $hardy!"
 		distro=hardy
-		binpath=bin
 	elif grep -q "$etch" /etc/issue; then
-		binpath=bin
-		if grep -q "$knoppix" /etc/motd; then
-			echo "This is $knoppix!"
-			distro=knoppix
-			# adding knoppix user and group
-			if ! grep -q ^knoppix: /etc/group; then
-				addgroup --system knoppix
+		echo "This is $etch!"
+		distro=etch
+		# adding system groups and users
+		for i in fuse rdma tss; do
+			if ! grep -q ^${i}: /etc/group; then
+				addgroup --system $i
 			fi
-			if ! grep -q ^knoppix: /etc/passwd; then
-				adduser --system --no-create-home --ingroup knoppix --disabled-login knoppix
-			fi
-		else
-			echo "This is $etch!"
-			distro=etch
-			# adding system groups and users
-			for i in fuse rdma tss; do
-				if ! grep -q ^${i}: /etc/group; then
-					addgroup --system $i
-				fi
-			done
-			if ! grep -q ^tss: /etc/passwd; then
-				adduser --system --no-create-home --ingroup tss --disabled-login tss
-			fi
+		done
+		if ! grep -q ^tss: /etc/passwd; then
+			adduser --system --no-create-home --ingroup tss --disabled-login tss
 		fi
 	else
 		echo "This distribution is not supported!"
