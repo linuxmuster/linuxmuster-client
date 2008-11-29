@@ -28,15 +28,6 @@ case $1 in
 			fi
 			echo .
 		fi
-
-		# copy host specific xorg.conf
-		if [ -f "/etc/X11/xorg.conf.$clientname" ]; then
-			echo -n " * linuxmuster-client: setting up Xorg.conf for $clientname"
-			cp /etc/X11/xorg.conf /etc/X11/xorg.conf.default
-			cp /etc/X11/xorg.conf.$clientname /etc/X11/xorg.conf
-			echo .
-		fi
-
 		;;
 
 	*)

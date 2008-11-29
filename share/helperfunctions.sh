@@ -20,3 +20,13 @@ get_userhome() {
 	fi
 	HOME=`cat $userhomecache`
 }
+
+
+# checking if directory is empty, in that case it returns 0
+check_empty_dir() {
+  unset RET
+  RET=$(ls -A1 $1 2>/dev/null | wc -l)
+  [ "$RET" = "0" ] && return 0
+  return 1
+}
+

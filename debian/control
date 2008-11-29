@@ -8,8 +8,10 @@ Standards-Version: 3.6.0
 Package: linuxmuster-client
 Architecture: all
 Provides: linuxmuster-clientconfig
-Conflicts: linuxmuster-clientconfig, linuxmuster-base
-Depends: ${shlibs:Depends}, ${misc:Depends}, libpam-ldap, libnss-ldap, nscd, libpam-mount, rsync, smbfs, ivman | automount-knoppix
+Conflicts: linuxmuster-clientconfig, linuxmuster-base, ivman
+Replaces: ivman
+Depends: ${shlibs:Depends}, ${misc:Depends}, libpam-ldap, libnss-ldap, nscd, libpam-mount, rsync, smbfs
 Description: Linux-Musterloesung client configuration scripts
  This package provides configuration scripts for debian-based clients
  to connect them to Linux-Musterloesung.
+

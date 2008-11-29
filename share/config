@@ -3,6 +3,7 @@
 # <schmitt@lmz-bw.de>
 
 # should be the same as on the server
+# in /usr/share/linuxmuster/config/dist.conf
 BACKUPMNTPOINT="/media/backup"
 ADMINISTRATOR="administrator"
 PGMADMIN="pgmadmin"
@@ -16,4 +17,11 @@ STUDENTSHOME="/home/students"
 WSHOME="/home/workstations"
 SHAREHOME="/home/share"
 ATTICHOME="/home/attic"
-TASKSCACHE="/var/cache/sophomorix/tasks"
+SOPHOMORIXCACHE="/var/cache/sophomorix"
+TASKSCACHE="$SOPHOMORIXCACHE/tasks"
+SAMBAHOME="/home/samba"
+NETLOGONDIR="$SAMBAHOME/netlogon"
+PROGSDIR="$SAMBAHOME/progs"
+CDSDIR="$SAMBAHOME/cds"
+MANDATORY_GROUPS="plugdev powerdev"
+

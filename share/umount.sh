@@ -24,13 +24,19 @@ get_userhome
 # do this only if mountpoint is userhome
 if [ "$HOME" = "$MNTPT" ]; then
 
+	# remove user from mandatory groups
+	for i in $MANDATORY_GROUPS; do
+		grep $i /etc/group | grep -q $USER && deluser ${USER} $i
+	done
+
 	# source profile
 	. /usr/share/linuxmuster-client/profile || exit 1
 	[ -z "$KDEHOME" ] && exit 1
 	[ -z "$DESKTOP" ] && exit 1
+	[ -z "$DOTLOCAL" ] && exit 1
 
 	# creating necessary dirs in user's home
-	for i in $HOME/.kde $HOME/.kde/Autostart $HOME/.kde/share $HOME/Desktop; do
+	for i in $HOME/.kde $HOME/.kde/Autostart $HOME/.kde/share $HOME/Desktop $HOME/.local; do
 		[[ -L "$i" || -f "$i" ]] && rm $i
 		[ -d "$i" ] || mkdir -p $i
 		chown $USER $i
@@ -46,9 +52,13 @@ if [ "$HOME" = "$MNTPT" ]; then
 	# syncing user's desktop
 	[ -d "$DESKTOP" ] && rsync -a --delete $DESKTOP/ $HOME/Desktop/
 
+	# syncing user's .local
+	[ -d "$DOTLOCAL" ] && rsync -a --delete $DOTLOCAL/ $HOME/.local/
+
 	# removing kdehome and desktop dirs
 	rm -rf $KDEHOME
 	rm -rf $DESKTOP
+	rm -rf $DOTLOCAL
 
 fi
 
@@ -62,12 +72,25 @@ if [ "$status" -ne 0 ]; then
 
 	sleep 5
 	for i in `lsof | grep $MNTPT | awk '{ print $2 }'`; do
-		kill $i
+		kill -9 $i
 	done
 	umount $MNTPT
 	status=$?
+	
+	# once again
+	if [ "$status" -ne 0 ]; then
+
+		sleep 5
+		for i in `lsof | grep $MNTPT | awk '{ print $2 }'`; do
+			kill -9 $i
+		done
+		umount $MNTPT
+		status=$?
+
+	fi
 
 fi
 
 # exit with umount status
 exit $status
+

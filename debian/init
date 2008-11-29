@@ -45,8 +45,16 @@ check_mountpoints() {
 	chown root:$DOMADMINS $SHAREHOME
 	chmod 771 $SHAREHOME
 		
+	# progs & cdrom
+	[ -d "$PROGSDIR" ] || mkdir -p $PROGSDIR
+	[ -d "$CDSDIR" ] || mkdir -p $CDSDIR
+	chown $ADMINISTRATOR:$DOMADMINS $SAMBAHOME/*
+	chmod 775 $SAMBAHOME/*
+	
 	# tasks
 	[ -d "$TASKSCACHE" ] || mkdir -p $TASKSCACHE
+	chown root:root $SOPHOMORIXCACHE
+	chmod 755 $SOPHOMORIXCACHE
 	chown root:root $TASKSCACHE
 	chmod 1771 $TASKSCACHE
 		
@@ -64,22 +72,40 @@ cleaning_homes() {
 
 	echo -n "linuxmuster-client: cleaning homes ..."
 
-	for i in $ADMINSHOME $TEACHERSHOME $WSHOME $STUDENTSHOME $SHAREHOME $ATTICHOME; do
+	for i in $ADMINSHOME $TEACHERSHOME $WSHOME $STUDENTSHOME $SHAREHOME $ATTICHOME $SAMBAHOME; do
 
 		if ! grep -q $i /etc/mtab; then
-			rm -rf $i/* &> /dev/null
+			[ -d "$i" ] && rm -rf $i/* &> /dev/null
 		fi
 
 	done
+
+	# cleaning previous user from kdm
+	[ -e /var/lib/kdm/kdmsts ] && rm -rf /var/lib/kdm/kdmsts
 
 	echo .
 
 } # cleaning_homes
 
+copy_xorg() {
+
+	# copy host specific xorg.conf
+	if [ -s "/etc/X11/xorg.conf.$clientname" ]; then
+		echo -n " * linuxmuster-client: setting up xorg.conf for $clientname"
+		if [ -L /etc/X11/xorg.conf ]; then
+			rm /etc/X11/xorg.conf
+		else
+			cp /etc/X11/xorg.conf /etc/X11/xorg.conf.default
+		fi
+		cp /etc/X11/xorg.conf.$clientname /etc/X11/xorg.conf
+		echo .
+	fi
+
+}
 
 restore_xorg() {
 
-	if [ -f /etc/X11/xorg.conf.default ]; then
+	if [ -s /etc/X11/xorg.conf.default ]; then
 		echo -n "linuxmuster-client: restoring default xorg.conf"
 		mv /etc/X11/xorg.conf.default /etc/X11/xorg.conf
 		echo .
@@ -91,8 +117,9 @@ restore_xorg() {
 case $1 in
 	
 	start)
-		check_mountpoints
 		cleaning_homes
+		check_mountpoints
+		copy_xorg
 		;;
 
 	stop)
@@ -106,3 +133,4 @@ case $1 in
 esac
 
 exit 0
+

@@ -3,11 +3,18 @@
 # no redirection for local users
 if test -n "$USER" && ! grep -q ^${USER}: /etc/passwd; then
 
+	# read linuxmuster-client default variables
+	. /usr/share/linuxmuster-client/config
+	. /usr/share/linuxmuster-client/helperfunctions.sh
+
 	# Redirects KDE Home to /tmp
 	export KDEHOME=/tmp/.kde_${USER}
 
 	# user's desktop has also to be in /tmp
 	export DESKTOP=/tmp/Desktop_${USER}
+
+	# user's .local has also to be in /tmp
+	export DOTLOCAL=/tmp/.local_${USER}
 
 	# Redirects access token file for dcopserver to /tmp
 	export ICEAUTHORITY=/tmp/${USER}_ICEauthority_${HOSTNAME}
@@ -15,4 +22,11 @@ if test -n "$USER" && ! grep -q ^${USER}: /etc/passwd; then
 	# Redirects the file "how to access the dcopserver" to /tmp
 	export DCOPAUTHORITY=/tmp/${USER}_DCOPserver-${HOSTNAME}_on_${DISPLAY}
 
+	# sets permissions on dirs under /home
+	if ! check_empty_dir $STUDENTSHOME; then
+		chown $ADMINISTRATOR:$TEACHERSGROUP $STUDENTSHOME/*
+		chmod 1751 $STUDENTSHOME/*
+	fi
+
 fi
+
