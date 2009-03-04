@@ -19,3 +19,9 @@ Description: LDAP Server host.
  .
  Note: It is always a good idea to use an IP address, it reduces risks of
  failure.
+
+Template: linuxmuster-client/template_user
+Type: string
+Default: linuxadmin
+Description: profile template user.
+ Template user from who certain profile directories were copied to the user's home.

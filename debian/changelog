@@ -1,3 +1,34 @@
+linuxmuster-client (0.9.8-1) testing; urgency=low
+
+  * moved profile script to /etc/gdm/Post/login/Default
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Tue, 03 Mar 2009 21:09:49 +0100
+
+linuxmuster-client (0.9.7-1) testing; urgency=low
+
+  * at least more bugfixes
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Tue, 03 Mar 2009 19:11:47 +0100
+
+linuxmuster-client (0.9.6-1) testing; urgency=low
+
+  * more bugfixes
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Tue, 03 Mar 2009 19:11:47 +0100
+
+linuxmuster-client (0.9.5-1) testing; urgency=low
+
+  * few bugfixes
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Tue, 03 Mar 2009 19:11:47 +0100
+
+linuxmuster-client (0.9.4-1) testing; urgency=low
+
+  * added profile support (thanks to Jörg Richter)
+  * added experimental support for jaunty
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Tue, 03 Mar 2009 19:11:47 +0100
+
 linuxmuster-client (0.9.3-1) testing; urgency=low
 
   * removed support for knoppix, dapper, edgy, feisty and gutsy

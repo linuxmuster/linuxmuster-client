@@ -1,3 +1,5 @@
+etc/Default			etc/gdm/PostLogin/
+etc/linuxmuster-client.conf	etc/
 common/*			var/lib/linuxmuster-client/common/
 hardy/*				var/lib/linuxmuster-client/hardy/
 etch/*				var/lib/linuxmuster-client/etch/

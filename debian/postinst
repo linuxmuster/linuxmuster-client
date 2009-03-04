@@ -21,155 +21,178 @@ set -e
 . /usr/share/debconf/confmodule
 
 case "$1" in
-    configure)
 
-	# read default variables
-	. /usr/share/linuxmuster-client/config || exit 1
-	. /usr/share/linuxmuster-client/supported_distros || exit 1
+	configure)
 
-	# check the distribution and do specific stuff
-	binpath=bin
-	cups=cupsys
-	if grep -q "$intrepid" /etc/issue; then
-		echo "This is $intrepid!"
-		distro=intrepid
-		cups=cups
-	elif grep -q "$hardy" /etc/issue; then
-		echo "This is $hardy!"
-		distro=hardy
-	elif grep -q "$etch" /etc/issue; then
-		echo "This is $etch!"
-		distro=etch
-		# adding system groups and users
-		for i in fuse rdma tss; do
+		# read default variables
+		. /usr/share/linuxmuster-client/config || exit 1
+		. /usr/share/linuxmuster-client/supported_distros || exit 1
+
+		# check the distribution and do specific stuff
+		binpath=bin
+		cups=cupsys
+		if grep -q "$jaunty" /etc/issue; then
+			echo "This is $jaunty!"
+			distro=jaunty
+			cups=cups
+		elif grep -q "$intrepid" /etc/issue; then
+			echo "This is $intrepid!"
+			distro=intrepid
+			cups=cups
+		elif grep -q "$hardy" /etc/issue; then
+			echo "This is $hardy!"
+			distro=hardy
+		elif grep -q "$etch" /etc/issue; then
+			echo "This is $etch!"
+			distro=etch
+			# adding system groups and users
+			for i in fuse rdma tss; do
+				if ! grep -q ^${i}: /etc/group; then
+					addgroup --system $i
+				fi
+			done
+			if ! grep -q ^tss: /etc/passwd; then
+				adduser --system --no-create-home --ingroup tss --disabled-login tss
+			fi
+		else
+			echo "This distribution is not supported!"
+			exit 1
+		fi
+
+		# sets hostname for dhclient at boot time
+		update-rc.d linuxmuster-hostname start 40 S .
+
+		# adding system groups plugdev and nvram
+		for i in plugdev nvram; do
 			if ! grep -q ^${i}: /etc/group; then
 				addgroup --system $i
 			fi
 		done
-		if ! grep -q ^tss: /etc/passwd; then
-			adduser --system --no-create-home --ingroup tss --disabled-login tss
+
+		# adding administrator to sudoers
+		if [ -e /etc/sudoers ]; then
+			if ! grep -q ^$ADMINISTRATOR /etc/sudoers; then
+				echo "Adding $ADMINISTRATOR to sudoers ..."
+				echo >> /etc/sudoers
+				echo "# linuxmuster: $ADMINISTRATOR may gain root privileges" >> /etc/sudoers
+				echo "$ADMINISTRATOR ALL=(ALL) ALL" >> /etc/sudoers
+			fi
 		fi
-	else
-		echo "This distribution is not supported!"
+
+		# adding cupsys user to shadow group
+		if id cupsys &> /dev/null; then
+			if ! id cupsys | grep -qw shadow; then
+				addgroup cupsys shadow
+			fi
+		fi
+
+		# adding printoperators group to cups system groups
+		if grep -q ^SystemGroup /etc/cups/cupsd.conf; then
+			if ! grep ^SystemGroup /etc/cups/cupsd.conf | grep -q $PRINTERADMINS; then
+				echo "Adding group $PRINTERADMINS to cupsd system groups ..."
+				cp /etc/cups/cupsd.conf /etc/cups/cupsd.conf.dpkg-old
+				sed -e "s/^SystemGroup.*/SystemGroup lpadmin $PRINTERADMINS/" /etc/cups/cupsd.conf.dpkg-old > /etc/cups/cupsd.conf
+				/etc/init.d/$cups restart
+			fi
+		fi
+
+		# reading basedn and serverip
+		db_get shared/ldapns/ldap-server
+		serverip=$RET
+		if [ -z "$serverip" ]; then
+			echo "Cannot get the ip for the ldap server! Skipping configuration!"
+			exit 0
+		fi
+
+		db_get shared/ldapns/base-dn
+		basedn=$RET
+		if [ -z "$basedn" ]; then
+			echo "Cannot get ldap basedn! Skipping configuration!"
+			exit 0
+		fi
+
+		# process template user
+		db_get linuxmuster-client/template_user
+		template_user=$RET
+		if [ -z "$template_user" ]; then
+			echo "Cannot get template user! Skipping configuration!"
+			exit 0
+		fi
+
+		# we need this directory
+		[ -d /etc/gdm/PostLogin ] || mkdir -p /etc/gdm/PostLogin
+
+		# patching configuration files
+		echo "Patching configuration ..."
+		cd /var/lib/linuxmuster-client
+		for i in common $distro; do
+			cd $i/templates
+			find -type f | xargs -i -t sh -c \
+			"sed -e 's%@@studentshome@@%${STUDENTSHOME}%g
+		 					s%@@sharehome@@%${SHAREHOME}%g
+		 					s%@@progsdir@@%${PROGSDIR}%g
+		 					s%@@cdsdir@@%${CDSDIR}%g
+		 					s%@@taskscache@@%${TASKSCACHE}%g
+		 					s%@@backupmntpoint@@%${BACKUPMNTPOINT}%g
+		 					s%@@basedn@@%${basedn}%g
+		 					s%@@binpath@@%${binpath}%g
+		 					s%@@administrator@@%${ADMINISTRATOR}%g
+		 					s%@@pgmadmin@@%${PGMADMIN}%g
+		 					s%@@serverip@@%${serverip}%g' {} > /{}" 2> /dev/null 1> /dev/null
+			cd ../../
+		done
+
+		# patch template user
+		if ! grep -q ^"TEMPLATE_USER=$template_user" /etc/linuxmuster-client.conf; then
+			echo "Writing new template user to /etc/linuxmuster-client.conf!"
+			cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
+			sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i /etc/linuxmuster-client.conf
+		fi
+
+		# remove hal's obsolete mountpolicies
+		if [ -e /etc/hal/fdi/policy/mountpolicies.fdi ]; then
+			mv /etc/hal/fdi/policy/mountpolicies.fdi /etc/hal/fdi/policy/mountpolicies.fdi.dpkg-old
+			[ -e /etc/init.d/dbus ] && /etc/init.d/dbus restart
+		fi
+
+		# remove obsolete profile from gdm's Postlogin
+		if [ -s /etc/gdm/PostLogin/Default ]; then
+			if grep -q /usr/share/linuxmuster-client/profile /etc/gdm/PostLogin/Default ]; then
+				cp /etc/gdm/PostLogin/Default /etc/gdm/PostLogin/Default.dpkg-old
+				grep -v /usr/share/linuxmuster-client/profile /etc/gdm/PostLogin/Default.dpkg-old > /etc/gdm/PostLogin/Default
+				chmod 755 /etc/gdm/PostLogin/Default
+			fi
+		fi
+
+		# remove ivman from Xsession.options
+		if [ -s /etc/X11/Xsession.options ]; then
+			if grep -q use-session-ivman /etc/X11/Xsession.options; then
+				cp /etc/X11/Xsession.options /etc/X11/Xsession.options.dpkg-old
+				grep -v use-session-ivman /etc/X11/Xsession.options.dpkg-old > /etc/X11/Xsession.options
+			fi
+		fi
+
+		# remove ivman's default
+		[ -e /etc/default/ivman ] && mv /etc/default/ivman /etc/default/ivman.dpkg-old
+
+		# remove ivman script from dapper
+		[ -e /etc/X11/ivman-xsession ] && mv /etc/X11/ivman-xsession /etc/X11/ivman-xsession.dpkg-old
+
+		echo "Note: You have to reboot the client if you have installed the package for the first time!"
+
+		;;
+
+	abort-upgrade|abort-remove|abort-deconfigure)
+
+		;;
+
+	*)
+
+		echo "postinst called with unknown argument \`$1'" >&2
 		exit 1
-	fi
 
-	# sets hostname for dhclient at boot time
-	update-rc.d linuxmuster-hostname start 40 S .
+		;;
 
-	# adding system groups plugdev and nvram
-	for i in plugdev nvram; do
-		if ! grep -q ^${i}: /etc/group; then
-			addgroup --system $i
-		fi
-	done
-
-	# adding administrator to sudoers
-	if [ -e /etc/sudoers ]; then
-		if ! grep -q ^$ADMINISTRATOR /etc/sudoers; then
-			echo "Adding $ADMINISTRATOR to sudoers ..."
-			echo >> /etc/sudoers
-			echo "# linuxmuster: $ADMINISTRATOR may gain root privileges" >> /etc/sudoers
-			echo "$ADMINISTRATOR ALL=(ALL) ALL" >> /etc/sudoers
-		fi
-	fi
-
-	# adding cupsys user to shadow group
-	if id cupsys &> /dev/null; then
-		if ! id cupsys | grep -qw shadow; then
-			addgroup cupsys shadow
-		fi
-	fi
-
-	# adding printoperators group to cups system groups
-	if grep -q ^SystemGroup /etc/cups/cupsd.conf; then
-		if ! grep ^SystemGroup /etc/cups/cupsd.conf | grep -q $PRINTERADMINS; then
-			echo "Adding group $PRINTERADMINS to cupsd system groups ..."
-			cp /etc/cups/cupsd.conf /etc/cups/cupsd.conf.dpkg-old
-			sed -e "s/^SystemGroup.*/SystemGroup lpadmin $PRINTERADMINS/" /etc/cups/cupsd.conf.dpkg-old > /etc/cups/cupsd.conf
-			/etc/init.d/$cups restart
-		fi
-	fi
-
-	# reading basedn and serverip
-	db_get shared/ldapns/ldap-server
-	serverip=$RET
-	if [ -z "$serverip" ]; then
-		echo "Cannot get the ip for the ldap server! Skipping configuration!"
-		exit 0
-	fi
-
-	db_get shared/ldapns/base-dn
-	basedn=$RET
-	if [ -z "$basedn" ]; then
-		echo "Cannot get ldap basedn! Skipping configuration!"
-		exit 0
-	fi
-
-	# we need this directory
-	[ -d /etc/gdm/PostLogin ] || mkdir -p /etc/gdm/PostLogin
-
-	# patching configuration files
-	echo "Patching configuration ..."
-	cd /var/lib/linuxmuster-client
-	for i in common $distro; do
-		cd $i/templates
-		find -type f | xargs -i -t sh -c \
-		"sed -e 's%@@studentshome@@%${STUDENTSHOME}%g
-			 s%@@sharehome@@%${SHAREHOME}%g
-			 s%@@progsdir@@%${PROGSDIR}%g
-			 s%@@cdsdir@@%${CDSDIR}%g
-			 s%@@taskscache@@%${TASKSCACHE}%g
-			 s%@@backupmntpoint@@%${BACKUPMNTPOINT}%g
-			 s%@@basedn@@%${basedn}%g
-			 s%@@binpath@@%${binpath}%g
-			 s%@@administrator@@%${ADMINISTRATOR}%g
-			 s%@@pgmadmin@@%${PGMADMIN}%g
-			 s%@@serverip@@%${serverip}%g' {} > /{}" 2> /dev/null 1> /dev/null
-		cd ../../
-	done
-
-	# remove hal's obsolete mountpolicies
-	if [ -e /etc/hal/fdi/policy/mountpolicies.fdi ]; then
-		mv /etc/hal/fdi/policy/mountpolicies.fdi /etc/hal/fdi/policy/mountpolicies.fdi.dpkg-old
-		[ -e /etc/init.d/dbus ] && /etc/init.d/dbus restart
-	fi
-
-	# remove obsolete profile from gdm's Postlogin
-	if [ -s /etc/gdm/PostLogin/Default ]; then
-		if grep -q /usr/share/linuxmuster-client/profile /etc/gdm/PostLogin/Default ]; then
-			cp /etc/gdm/PostLogin/Default /etc/gdm/PostLogin/Default.dpkg-old
-			grep -v /usr/share/linuxmuster-client/profile /etc/gdm/PostLogin/Default.dpkg-old > /etc/gdm/PostLogin/Default
-			chmod 755 /etc/gdm/PostLogin/Default
-		fi
-	fi
-
-	# remove ivman from Xsession.options
-	if [ -s /etc/X11/Xsession.options ]; then
-		if grep -q use-session-ivman /etc/X11/Xsession.options; then
-			cp /etc/X11/Xsession.options /etc/X11/Xsession.options.dpkg-old
-			grep -v use-session-ivman /etc/X11/Xsession.options.dpkg-old > /etc/X11/Xsession.options
-		fi
-	fi
-
-	# remove ivman's default
-	[ -e /etc/default/ivman ] && mv /etc/default/ivman /etc/default/ivman.dpkg-old
-
-	# remove ivman script from dapper
-	[ -e /etc/X11/ivman-xsession ] && mv /etc/X11/ivman-xsession /etc/X11/ivman-xsession.dpkg-old
-
-	echo "Note: You have to reboot the client if you have installed the package for the first time!"
-
-      ;;
-
-    abort-upgrade|abort-remove|abort-deconfigure)
-
-    ;;
-
-    *)
-        echo "postinst called with unknown argument \`$1'" >&2
-        exit 1
-    ;;
 esac
 
 # dh_installdeb will replace this with shell code automatically
@@ -180,3 +203,4 @@ esac
 db_stop
 
 exit 0
+

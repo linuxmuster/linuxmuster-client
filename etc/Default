@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# copy default user profile
+#
+# 03.03.2009
+#
+
+# source settings
+. /etc/linuxmuster-client.conf
+
+if [ -n "$TEMPLATE_USER" ]; then
+
+	if [ "$USER" != "$TEMPLATE_USER" ]; then
+
+		PROFILE_HOME=$(getent passwd $TEMPLATE_USER | awk -F\: '{ print $6 }')
+
+		for i in $PROFILE_DIRS; do
+			[ -e "$HOME/$i" ] && rm -rf $HOME/$i
+			[ -e "$PROFILE_HOME/$i" ] && cp -a $PROFILE_HOME/$i $HOME
+			[ -e "$HOME/$i" ] && chown $USER $HOME/$i -R
+		done
+
+	fi
+
+fi
