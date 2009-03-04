@@ -119,6 +119,14 @@ case "$1" in
 			exit 0
 		fi
 
+		# get firefox setting
+		db_get linuxmuster-client/firefox
+		do_firefox=$RET
+		if [ -z "$do_firefox" ]; then
+			echo "Cannot get firefox setting! Skipping configuration!"
+			exit 0
+		fi
+
 		# we need this directory
 		[ -d /etc/gdm/PostLogin ] || mkdir -p /etc/gdm/PostLogin
 
@@ -142,26 +150,36 @@ case "$1" in
 			cd ../../
 		done
 
+		# read config values
+		. /etc/linuxmuster-client.conf
+
 		# patch template user
-		if ! grep -q ^"TEMPLATE_USER=$template_user" /etc/linuxmuster-client.conf; then
+		if [ -z "$TEMPLATE_USER" ]; then
 			echo "Writing new template user to /etc/linuxmuster-client.conf!"
 			cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
 			sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i /etc/linuxmuster-client.conf
+			clientconf_backup=yes
+		else
+			echo "Template user in linuxmuster-client.conf is already set. Skipping configuration!"
+		fi
+
+		# patch firefox setting
+		if [ -z "$FIREFOX" ]; then
+			echo "Writing new firefox setting to /etc/linuxmuster-client.conf!"
+			[ -z "$clientconf_backup" ] && cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
+			if $do_firefox; then
+				sed -e "s|^FIREFOX=.*|FIREFOX=yes|" -i /etc/linuxmuster-client.conf
+			else
+				sed -e "s|^FIREFOX=.*|FIREFOX=no|" -i /etc/linuxmuster-client.conf
+			fi
+		else
+			echo "Firefox setting in linuxmuster-client.conf is already set. Skipping configuration!"
 		fi
 
 		# remove hal's obsolete mountpolicies
 		if [ -e /etc/hal/fdi/policy/mountpolicies.fdi ]; then
 			mv /etc/hal/fdi/policy/mountpolicies.fdi /etc/hal/fdi/policy/mountpolicies.fdi.dpkg-old
 			[ -e /etc/init.d/dbus ] && /etc/init.d/dbus restart
-		fi
-
-		# remove obsolete profile from gdm's Postlogin
-		if [ -s /etc/gdm/PostLogin/Default ]; then
-			if grep -q /usr/share/linuxmuster-client/profile /etc/gdm/PostLogin/Default ]; then
-				cp /etc/gdm/PostLogin/Default /etc/gdm/PostLogin/Default.dpkg-old
-				grep -v /usr/share/linuxmuster-client/profile /etc/gdm/PostLogin/Default.dpkg-old > /etc/gdm/PostLogin/Default
-				chmod 755 /etc/gdm/PostLogin/Default
-			fi
 		fi
 
 		# remove ivman from Xsession.options

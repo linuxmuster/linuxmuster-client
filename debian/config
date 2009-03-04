@@ -16,6 +16,7 @@ my @current_config;
 read_and_input('shared/ldapns/ldap-server', 'uri', 'critical');
 read_and_input('shared/ldapns/base-dn', 'base', 'critical');
 read_and_input('linuxmuster-client/template_user', 'base', 'critical');
+read_and_input('linuxmuster-client/firefox', 'base', 'critical');
 $ret = go();  # yeah, we don't need that.. but in case we sometime do
 
 sub read_and_input

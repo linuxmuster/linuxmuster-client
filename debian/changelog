@@ -1,3 +1,13 @@
+linuxmuster-client (0.9.9-1) testing; urgency=low
+
+  * added firefox profile handling
+  * empty default settings for TEMPLATE_USER and FIREFOX
+  * debconf values for FIREFOX and TEMPLATE_USER were only set if they
+    were emtpy in linuxmuster-client.conf
+  * removed obsolete profile handling from postinst
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Wed, 04 Mar 2009 19:54:28 +0100
+
 linuxmuster-client (0.9.8-1) testing; urgency=low
 
   * moved profile script to /etc/gdm/Post/login/Default
