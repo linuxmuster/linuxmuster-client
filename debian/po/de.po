@@ -1,0 +1,43 @@
+
+#. Type: string
+#. Description
+#: ../templates:1
+msgid "LDAP Server host."
+msgstr "LDAP-Server."
+
+#. Type: string
+#. Description
+#: ../templates:1
+msgid ""
+"The address of the LDAP server used. "
+"Note: It is always a good idea to use an IP address, it reduces risks of failure."
+msgstr ""
+"Die IP-Adresse des verwendeten LDAP-Servers. "
+"Es wird empfohlen die IP-Adresse zu verwenden, das vermindert das Ausfallrisiko."
+
+#. Type: string
+#. Description
+#: ../templates:2
+msgid "The distinguished name of the search base."
+msgstr "Der eindeutige Name (DN) der Suchbasis."
+
+#. Type: string
+#. Description
+#: ../templates:3
+msgid "Login name of template user."
+msgstr "Login des Vorlagen-Benutzers fuer Profile."
+
+#. Type: string
+#. Description
+#: ../templates:3
+msgid ""
+"Template user from who certain profile directories were copied to the user's home."
+msgstr ""
+"Vorlagen-Benutzer, von dem bestimmte Profilverzeichnisse in das Benutzerprofil kopiert werden."
+
+#. Type: boolean
+#. Description
+#: ../templates:4
+msgid "Copy initial Firefox profile to user's home?"
+msgstr "Soll das Firefox-Profil des Vorlagen-Benutzers als Startprofil verwendet werden?"
+

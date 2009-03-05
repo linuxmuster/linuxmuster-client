@@ -1,33 +1,23 @@
-Template: shared/ldapns/base-dn
-Type: string
-Default: dc=linuxmuster,dc=local
-Description: The distinguished name of the search base.
-
-Template: shared/ldapns/ldap_version
-Type: select
-Choices: 3, 2
-Default: 3
-Description: LDAP version to use.
- This variable controls which version of the LDAP protocol will ldapns use.
- It is always a good idea to set this to highest possible version number.
-
 Template: shared/ldapns/ldap-server
 Type: string
 Default: 10.16.1.1
-Description: LDAP Server host.
+_Description: LDAP Server host.
  The address of the LDAP server used.
- .
- Note: It is always a good idea to use an IP address, it reduces risks of
- failure.
+ Note: It is always a good idea to use an IP address, it reduces risks of failure.
+
+Template: shared/ldapns/base-dn
+Type: string
+Default: dc=linuxmuster,dc=local
+_Description: The distinguished name of the search base.
 
 Template: linuxmuster-client/template_user
 Type: string
 Default: linuxadmin
-Description: Login name of template user.
+_Description: Login name of template user.
  Template user from who certain profile directories were copied to the user's home.
 
 Template: linuxmuster-client/firefox
 Type: boolean
 Default: false
-Description: Copy initial Firefox profile to user's home?
+_Description: Copy initial Firefox profile to user's home?
 

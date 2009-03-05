@@ -1,3 +1,10 @@
+linuxmuster-client (0.9.9-2) testing; urgency=low
+
+  * moved value syncing between debconf and linuxmuster-client.conf from postinst to config
+  * added german template translations
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Thu, 05 Mar 2009 10:15:12 +0100
+
 linuxmuster-client (0.9.9-1) testing; urgency=low
 
   * added firefox profile handling

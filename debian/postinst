@@ -111,22 +111,6 @@ case "$1" in
 			exit 0
 		fi
 
-		# process template user
-		db_get linuxmuster-client/template_user
-		template_user=$RET
-		if [ -z "$template_user" ]; then
-			echo "Cannot get template user! Skipping configuration!"
-			exit 0
-		fi
-
-		# get firefox setting
-		db_get linuxmuster-client/firefox
-		do_firefox=$RET
-		if [ -z "$do_firefox" ]; then
-			echo "Cannot get firefox setting! Skipping configuration!"
-			exit 0
-		fi
-
 		# we need this directory
 		[ -d /etc/gdm/PostLogin ] || mkdir -p /etc/gdm/PostLogin
 
@@ -149,32 +133,6 @@ case "$1" in
 		 					s%@@serverip@@%${serverip}%g' {} > /{}" 2> /dev/null 1> /dev/null
 			cd ../../
 		done
-
-		# read config values
-		. /etc/linuxmuster-client.conf
-
-		# patch template user
-		if [ -z "$TEMPLATE_USER" ]; then
-			echo "Writing new template user to /etc/linuxmuster-client.conf!"
-			cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
-			sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i /etc/linuxmuster-client.conf
-			clientconf_backup=yes
-		else
-			echo "Template user in linuxmuster-client.conf is already set. Skipping configuration!"
-		fi
-
-		# patch firefox setting
-		if [ -z "$FIREFOX" ]; then
-			echo "Writing new firefox setting to /etc/linuxmuster-client.conf!"
-			[ -z "$clientconf_backup" ] && cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
-			if $do_firefox; then
-				sed -e "s|^FIREFOX=.*|FIREFOX=yes|" -i /etc/linuxmuster-client.conf
-			else
-				sed -e "s|^FIREFOX=.*|FIREFOX=no|" -i /etc/linuxmuster-client.conf
-			fi
-		else
-			echo "Firefox setting in linuxmuster-client.conf is already set. Skipping configuration!"
-		fi
 
 		# remove hal's obsolete mountpolicies
 		if [ -e /etc/hal/fdi/policy/mountpolicies.fdi ]; then

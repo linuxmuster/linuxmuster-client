@@ -1,35 +1,69 @@
-#!/usr/bin/perl
-# Debconf configuration script for PADL-ldap tools.
-# By Sami Haahtinen <ressu@debian.org>
-# hacked for linuxmuster by Thomas Schmitt <schmitt@lmz-bw.de>
-#
+#!/bin/sh
 
-use Debconf::Client::ConfModule ':all';
-version('2.0');
+# Source debconf library.
+. /usr/share/debconf/confmodule
 
-# Not yet.. i'll prolly fix this later...
-# my $capb=capb('backup');
+# source config
+. /etc/linuxmuster-client.conf
 
-my @ret;
-my @current_config;
+db_version 2.0
+db_capb backup
 
-read_and_input('shared/ldapns/ldap-server', 'uri', 'critical');
-read_and_input('shared/ldapns/base-dn', 'base', 'critical');
-read_and_input('linuxmuster-client/template_user', 'base', 'critical');
-read_and_input('linuxmuster-client/firefox', 'base', 'critical');
-$ret = go();  # yeah, we don't need that.. but in case we sometime do
+PRIORITY="critical"
 
-sub read_and_input
-{
-	my ($debconf_name, $conffile_name, $priority) = @_;
-	$priority = 'medium' unless $priority;
+db_title "linuxmuster-client Konfiguration"
 
-	my @valuelist = grep(/^$conffile_name\s/, @current_config);
-	if (@valuelist) {
-		my $value = pop(@valuelist);
-		chomp($value);
-		$value =~ s/^$conffile_name\s+//;
-		set($debconf_name, $value);
-	}
-	input($priority, $debconf_name);
-}
+# ldap server uri
+while [ -z "$INPUT" ]; do
+  db_input $PRIORITY shared/ldapns/ldap-server || true
+  db_go
+  db_get shared/ldapns/ldap-server || true
+  INPUT=$RET
+done
+
+# ldap basedn
+unset INPUT
+while [ -z "$INPUT" ]; do
+  db_input $PRIORITY shared/ldapns/base-dn || true
+  db_go
+  db_get shared/ldapns/base-dn || true
+  INPUT=$RET
+done
+
+# template user
+db_set linuxmuster-client/template_user $TEMPLATE_USER || true
+db_input $PRIORITY linuxmuster-client/template_user || true
+db_go
+db_get linuxmuster-client/template_user || true
+TEMPLATE_USER_NEW=$RET
+
+# firefox
+if [ "$FIREFOX" = "yes" ]; then
+	db_set linuxmuster-client/firefox true || true
+else
+	db_set linuxmuster-client/firefox false || true
+fi
+db_input $PRIORITY linuxmuster-client/firefox || true
+db_go
+db_get linuxmuster-client/firefox || true
+do_firefox=$RET
+if $do_firefox; then
+	FIREFOX_NEW=yes
+else
+	FIREFOX_NEW=no
+fi
+
+# finish debconf stuff
+db_stop
+
+# patch configfile if necessary
+if [ "$TEMPLATE_USER" != "$TEMPLATE_USER_NEW" ]; then
+	cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
+  conf_backup=yes
+	sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$TEMPLATE_USER_NEW|" -i /etc/linuxmuster-client.conf
+fi
+if [ "$FIREFOX" != "$FIREFOX_NEW" ]; then
+	[ -z "$conf_backup" ] && cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
+	sed -e "s|^FIREFOX=.*|FIREFOX=$FIREFOX_NEW|" -i /etc/linuxmuster-client.conf
+fi
+
