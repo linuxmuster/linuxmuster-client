@@ -1,3 +1,9 @@
+linuxmuster-client (0.9.9-3) testing; urgency=low
+
+  * fix missing jaunty template link
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Thu, 19 Mar 2009 12:55:08 +0100
+
 linuxmuster-client (0.9.9-2) testing; urgency=low
 
   * moved value syncing between debconf and linuxmuster-client.conf from postinst to config
