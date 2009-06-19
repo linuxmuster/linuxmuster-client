@@ -1,3 +1,9 @@
+linuxmuster-client (0.9.10-1) testing; urgency=low
+
+  * added final support for Ubuntu 9.04
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Tue, 05 May 2009 15:22:53 +0200
+
 linuxmuster-client (0.9.9-3) testing; urgency=low
 
   * fix missing jaunty template link
