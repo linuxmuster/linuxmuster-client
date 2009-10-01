@@ -3,6 +3,8 @@
 # umount wrapper for pam_mount
 # schmitt@lmz-bw.de
 #
+# 11.07.2009
+#
 
 # parameters given by pammount
 USER=$1
@@ -37,7 +39,7 @@ if [ "$HOME" = "$MNTPT" ]; then
 
 	# creating necessary dirs in user's home
 	for i in $HOME/.kde $HOME/.kde/Autostart $HOME/.kde/share $HOME/Desktop $HOME/.local; do
-		[[ -L "$i" || -f "$i" ]] && rm $i
+		[[ -L "$i" || -f "$i" ]] && rm -rf $i
 		[ -d "$i" ] || mkdir -p $i
 		chown $USER $i
 		chmod 700 $i

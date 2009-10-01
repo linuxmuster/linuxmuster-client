@@ -1,4 +1,5 @@
 # supplemental profile for linuxmuster client
+# 11.07.2009
 
 # no redirection for local users
 if test -n "$USER" && ! grep -q ^${USER}: /etc/passwd; then
@@ -21,12 +22,6 @@ if test -n "$USER" && ! grep -q ^${USER}: /etc/passwd; then
 
 	# Redirects the file "how to access the dcopserver" to /tmp
 	export DCOPAUTHORITY=/tmp/${USER}_DCOPserver-${HOSTNAME}_on_${DISPLAY}
-
-	# sets permissions on dirs under /home
-	if ! check_empty_dir $STUDENTSHOME; then
-		chown $ADMINISTRATOR:$TEACHERSGROUP $STUDENTSHOME/*
-		chmod 1751 $STUDENTSHOME/*
-	fi
 
 fi
 

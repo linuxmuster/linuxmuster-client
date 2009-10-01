@@ -23,5 +23,5 @@ SAMBAHOME="/home/samba"
 NETLOGONDIR="$SAMBAHOME/netlogon"
 PROGSDIR="$SAMBAHOME/progs"
 CDSDIR="$SAMBAHOME/cds"
-MANDATORY_GROUPS="plugdev powerdev"
+MANDATORY_GROUPS="plugdev powerdev pulse-rt"
 

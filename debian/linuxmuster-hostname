@@ -1,8 +1,17 @@
 #!/bin/bash
-#
-# writes hostname in dhclient config
+
+### BEGIN INIT INFO
+# Provides:          linuxmuster-hostname
+# Required-Start:
+# Required-Stop:
+# Default-Start:
+# Default-Stop:
+# Short-Description: writes hostname in dhclient config
+# Description:       linuxmuster debian client configuration script
+### END INIT INFO
+
 # Thomas Schmitt <schmitt@lmz-bw.de>
-# 21.02.2007
+# 11.07.2009
 #
 
 # read hostname
@@ -21,8 +30,7 @@ case $1 in
 			# patch dhclient.conf with hostname
 			echo -n " * linuxmuster-client: setting up dhcp hostname for $clientname"
 			if grep -q "^send host-name" $DHCLIENTCONF; then
-				sed -e "s/^send host-name.*/send host-name \"$clientname\";/" $DHCLIENTCONF > $DHCLIENTCONF.tmp
-				mv $DHCLIENTCONF.tmp $DHCLIENTCONF
+				sed -e "s/^send host-name.*/send host-name \"$clientname\";/" -i $DHCLIENTCONF
 			else
 				echo "send host-name \"$clientname\";" >> $DHCLIENTCONF
 			fi

@@ -1,9 +1,14 @@
 #!/bin/bash
-#
-# linuxmuster debian client configuration script
-#
-# schmitt@lmz-bw.de
-#
+
+### BEGIN INIT INFO
+# Provides:          linuxmuster-client
+# Required-Start:
+# Required-Stop:
+# Default-Start:
+# Default-Stop:
+# Short-Description: Updates hostname and xorg.conf
+# Description:       linuxmuster debian client configuration script
+### END INIT INFO
 
 # read default variables
 . /usr/share/linuxmuster-client/config || exit 1

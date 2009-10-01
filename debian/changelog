@@ -1,3 +1,12 @@
+linuxmuster-client (0.9.11-1) testing; urgency=low
+
+  * fixed ldap configuration for Ubuntu 9.04
+  * fixed rm commands in mount scripts
+  * moved permission correction for students home dirs from profile to gdm's PostLogin script
+  * added missing LSB information to init scripts
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sat, 11 Jul 2009 18:07:34 +0200
+
 linuxmuster-client (0.9.10-1) testing; urgency=low
 
   * added final support for Ubuntu 9.04

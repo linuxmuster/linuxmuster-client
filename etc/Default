@@ -2,12 +2,14 @@
 #
 # copy default user profile
 #
-# 04.03.2009
+# 11.07.2009
 # Jörg Richter/Thomas Schmitt
 #
 
 # source settings
 . /etc/linuxmuster-client.conf || exit 1
+. /usr/share/linuxmuster-client/config || exit 1
+. /usr/share/linuxmuster-client/helperfunctions.sh || exit 1
 
 # quit if TEMPLATE_USER is not set
 [ -z "$TEMPLATE_USER" ] && exit 0
@@ -55,4 +57,10 @@ for i in $PROFILE_DIRS; do
 	[ -e "$PROFILE_HOME/$i" ] && cp -a $PROFILE_HOME/$i $HOME
 	[ -e "$HOME/$i" ] && chown -R $USER $HOME/$i
 done
+
+# finally sets permissions for $STUDENTSHOME
+if ! check_empty_dir $STUDENTSHOME; then
+	chown $ADMINISTRATOR:$TEACHERSGROUP $STUDENTSHOME/*
+	chmod 1751 $STUDENTSHOME/*
+fi
 

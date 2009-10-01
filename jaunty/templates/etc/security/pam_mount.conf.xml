@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pam_mount>
+
+<debug enable="1" />
+
+<mkmountpoint enable="1" />
+
+<lsof>/usr/bin/lsof %(MNTPT)</lsof>
+
+<fsck>/sbin/fsck -p %(FSCKTARGET)</fsck>
+
+<cifsmount>/usr/share/linuxmuster-client/mount.sh %(SERVER) %(VOLUME) %(MNTPT) %(USER) "username=%(USER)%(before=\",\" OPTIONS)"</cifsmount>
+
+<umount>/usr/share/linuxmuster-client/umount.sh %(USER) %(MNTPT)</umount>
+
+
+
+<mntcheck>/bin/mount</mntcheck>
+
+<pmvarrun>/usr/sbin/pmvarrun -u %(USER) -d -o %(OPERATION)</pmvarrun>
+
+<volume options="rw,nosuid,nodev,wsize=8192,rsize=8192,nobrl" user="*" mountpoint="~" path="%(USER)" server="@@serverip@@" fstype="cifs" />
+
+<volume options="rw,nosuid,nodev,wsize=8192,rsize=8192" user="*" mountpoint="@@studentshome@@" path="students" server="@@serverip@@" fstype="cifs" />
+
+<volume options="rw,nosuid,nodev,wsize=8192,rsize=8192" user="*" mountpoint="@@sharehome@@" path="shares" server="@@serverip@@" fstype="cifs" />
+
+<volume options="rw,nosuid,nodev,wsize=8192,rsize=8192" user="*" mountpoint="@@progsdir@@" path="pgm" server="@@serverip@@" fstype="cifs" />
+
+<volume options="rw,nosuid,nodev,wsize=8192,rsize=8192" user="*" mountpoint="@@cdsdir@@" path="cdrom" server="@@serverip@@" fstype="cifs" />
+
+<volume options="rw,nosuid,nodev,wsize=8192,rsize=8192" user="*" mountpoint="@@taskscache@@" path="tasks" server="@@serverip@@" fstype="cifs" />
+
+<volume options="rw,nosuid,nodev,wsize=8192,rsize=8192" user="*" mountpoint="@@backupmntpoint@@" path="backup" server="@@serverip@@" fstype="cifs" />
+
+</pam_mount>

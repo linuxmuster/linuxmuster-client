@@ -3,6 +3,8 @@
 # mount wrapper for pam_mount
 # schmitt@lmz-bw.de
 #
+# 11.07.2009
+#
 
 # args
 SERVER=$1
@@ -53,7 +55,7 @@ mount | grep -q $HOME || exit 1
 
 # creating user's temporary dirs
 for i in $KDEHOME $KDEHOME/Autostart $KDEHOME/share $DESKTOP $DOTLOCAL; do
-	[[ -L "$i" || -f "$i" ]] && rm $i
+	[[ -L "$i" || -e "$i" ]] && rm -rf $i
 	[ -d "$i" ] || mkdir -p $i
 	chown $USER $i
 	chmod 700 $i
@@ -92,7 +94,7 @@ if [ -d "$HOME/.kde" ]; then
 	[ -e "$HOME/.kde.old" ] && rm -rf $HOME/.kde.old
 	mv $HOME/.kde $HOME/.kde.old
 fi
-[ -e "$HOME/.kde" ] && rm $HOME/.kde
+[ -e "$HOME/.kde" ] && rm -rf $HOME/.kde
 ln -s $KDEHOME $HOME/.kde
 chown $USER $HOME/.kde
 
@@ -101,7 +103,7 @@ if [ -d "$HOME/Desktop" ]; then
 	[ -e "$HOME/.Desktop.old" ] && rm -rf $HOME/.Desktop.old
 	mv $HOME/Desktop $HOME/.Desktop.old
 fi
-[ -e "$HOME/Desktop" ] && rm $HOME/Desktop
+[ -e "$HOME/Desktop" ] && rm -rf $HOME/Desktop
 ln -s $DESKTOP $HOME/Desktop
 chown $USER $HOME/Desktop
 
@@ -110,7 +112,7 @@ if [ -d "$HOME/.local" ]; then
 	[ -e "$HOME/.local.old" ] && rm -rf $HOME/.local.old
 	mv $HOME/.local $HOME/.local.old
 fi
-[ -e "$HOME/.local" ] && rm $HOME/.local
+[ -e "$HOME/.local" ] && rm -rf $HOME/.local
 ln -s $DOTLOCAL $HOME/.local
 chown $USER $HOME/.local
 
