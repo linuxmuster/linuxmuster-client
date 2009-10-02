@@ -96,20 +96,29 @@ case "$1" in
 			fi
 		fi
 
-		# reading basedn and serverip
-		db_get shared/ldapns/ldap-server
+		# basedn
+		db_get shared/ldapns/ldap-server || true
 		serverip=$RET
 		if [ -z "$serverip" ]; then
 			echo "Cannot get the ip for the ldap server! Skipping configuration!"
 			exit 0
 		fi
 
-		db_get shared/ldapns/base-dn
+  # serverip
+		db_get shared/ldapns/base-dn || true
 		basedn=$RET
 		if [ -z "$basedn" ]; then
 			echo "Cannot get ldap basedn! Skipping configuration!"
 			exit 0
 		fi
+
+  # template user
+  db_get linuxmuster-client/template_user || true
+  template_user=$RET
+
+  # firefox profile from template user?
+  db_get linuxmuster-client/firefox || true
+  if $RET; then firefox=yes; else firefox=no; fi
 
 		# we need this directory
 		[ -d /etc/gdm/PostLogin ] || mkdir -p /etc/gdm/PostLogin
@@ -133,6 +142,19 @@ case "$1" in
 		 					s%@@serverip@@%${serverip}%g' {} > /{}" 2> /dev/null 1> /dev/null
 			cd ../../
 		done
+
+  # patch package configfile
+	 [ -e /etc/linuxmuster-client.conf ] && cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
+	 if grep -q ^TEMPLATE_USER /etc/linuxmuster-client.conf; then
+		 sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i /etc/linuxmuster-client.conf
+	 else
+		 echo "TEMPLATE_USER=$template_user" > /etc/linuxmuster-client.conf
+	 fi
+ 	if grep -q ^FIREFOX /etc/linuxmuster-client.conf; then
+		 sed -e "s|^FIREFOX=.*|FIREFOX=$firefox|" -i /etc/linuxmuster-client.conf
+	 else
+		 echo "FIREFOX=$firefox" >> /etc/linuxmuster-client.conf
+ 	fi
 
 		# remove hal's obsolete mountpolicies
 		if [ -e /etc/hal/fdi/policy/mountpolicies.fdi ]; then

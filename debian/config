@@ -36,8 +36,6 @@ done
 db_set linuxmuster-client/template_user $TEMPLATE_USER || true
 db_input $PRIORITY linuxmuster-client/template_user || true
 db_go
-db_get linuxmuster-client/template_user || true
-TEMPLATE_USER_NEW=$RET
 
 # firefox
 if [ "$FIREFOX" = "yes" ]; then
@@ -47,33 +45,7 @@ else
 fi
 db_input $PRIORITY linuxmuster-client/firefox || true
 db_go
-db_get linuxmuster-client/firefox || true
-do_firefox=$RET
-if $do_firefox; then
-	FIREFOX_NEW=yes
-else
-	FIREFOX_NEW=no
-fi
 
 # finish debconf stuff
 db_stop
-
-# patch configfile if necessary
-if [ "$TEMPLATE_USER" != "$TEMPLATE_USER_NEW" ]; then
-	[ -e /etc/linuxmuster-client.conf ] && cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
-  conf_backup=yes
-	if grep -q ^TEMPLATE_USER /etc/linuxmuster-client.conf; then
-		sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$TEMPLATE_USER_NEW|" -i /etc/linuxmuster-client.conf
-	else
-		echo "TEMPLATE_USER=$TEMPLATE_USER_NEW" > /etc/linuxmuster-client.conf
-	fi
-fi
-if [ "$FIREFOX" != "$FIREFOX_NEW" ]; then
-	[ -z "$conf_backup" ] && cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
-	if grep -q ^FIREFOX /etc/linuxmuster-client.conf; then
-		sed -e "s|^FIREFOX=.*|FIREFOX=$FIREFOX_NEW|" -i /etc/linuxmuster-client.conf
-	else
-		echo "FIREFOX=$FIREFOX_NEW" >> /etc/linuxmuster-client.conf
-	fi
-fi
 
