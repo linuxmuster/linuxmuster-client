@@ -13,7 +13,7 @@ stringinstring() {
 
 # get user homedir
 get_userhome() {
-	userhomecache=/tmp/.cache-$USER
+	userhomecache=/tmp/.home-$USER
 	if [ ! -s "$userhomecache" ]; then
 		getent passwd $USER | cut -f6 -d: > $userhomecache
 		chmod 600 $userhomecache

@@ -1,0 +1,5 @@
+# list of directories and files to be excluded from sync with profile of template user
+cifs*
+keyrings/
+metacity/sessions/
+

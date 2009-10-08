@@ -6,6 +6,15 @@
 # 11.07.2009
 #
 
+# check if mountpoint is mounted
+mounted(){
+ if cat /proc/mounts | grep -qw $MNTPT; then
+  return 0
+ else
+  return 1
+ fi
+}
+
 # parameters given by pammount
 USER=$1
 MNTPT=$2
@@ -35,64 +44,36 @@ if [ "$HOME" = "$MNTPT" ]; then
 	. /usr/share/linuxmuster-client/profile || exit 1
 	[ -z "$KDEHOME" ] && exit 1
 	[ -z "$DESKTOP" ] && exit 1
-	[ -z "$DOTLOCAL" ] && exit 1
+	[ -z "$USERDIRS" ] && exit 1
 
-	# creating necessary dirs in user's home
-	for i in $HOME/.kde $HOME/.kde/Autostart $HOME/.kde/share $HOME/Desktop $HOME/.local; do
-		[[ -L "$i" || -f "$i" ]] && rm -rf $i
-		[ -d "$i" ] || mkdir -p $i
-		chown $USER $i
-		chmod 700 $i
-	done
+ # move user's dir back from /tmp
+ for i in $USERDIRS; do
+  rm -rf $HOME/$i
+  mkdir -p $HOME/$i
+  for d in cache socket tmp; do
+   rm -rf /tmp/${i}-${USER}/${d}-*
+  done
+  [ -d "/tmp/${i}-${USER}" -a -d "$HOME/$i" ] && rsync -a --delete /tmp/${i}-${USER}/ $HOME/$i/
+  chmod 700 $HOME/$i
+ done
 
-	# syncing user's kde settings
-	[ -d "$KDEHOME/share" ] && rsync -a --delete $KDEHOME/share/ $HOME/.kde/share/
-
-	# syncing user's kde Autostart
-	[ -d "$KDEHOME/Autostart" ] && rsync -a --delete $KDEHOME/Autostart/ $HOME/.kde/Autostart/
-
-	# syncing user's desktop
-	[ -d "$DESKTOP" ] && rsync -a --delete $DESKTOP/ $HOME/Desktop/
-
-	# syncing user's .local
-	[ -d "$DOTLOCAL" ] && rsync -a --delete $DOTLOCAL/ $HOME/.local/
-
-	# removing kdehome and desktop dirs
-	rm -rf $KDEHOME
-	rm -rf $DESKTOP
-	rm -rf $DOTLOCAL
+ # handle .cache and .gvfs
+ for i in .cache .gvfs; do
+  [ -e "/tmp/${i}-${USER}" ] && rm -rf /tmp/${i}-${USER}
+  [ -e "$HOME/$i" ] && rm -rf $HOME/$i
+ done
 
 fi
 
 # umount given share
 umount $MNTPT
-status=$?
+mounted || exit 0
+sleep 5
+umount $MNTPT
+mounted || exit 0
+kill -9 `lsof -t $MNTPT`
+umount $MNTPT || umount -l $MNTPT
+RC="$?"
 
-# if unmounting fails kill processes which prevent $MNTPT from unmounting
-# and do a second try
-if [ "$status" -ne 0 ]; then
-
-	sleep 5
-	for i in `lsof | grep $MNTPT | awk '{ print $2 }'`; do
-		kill -9 $i
-	done
-	umount $MNTPT
-	status=$?
-	
-	# once again
-	if [ "$status" -ne 0 ]; then
-
-		sleep 5
-		for i in `lsof | grep $MNTPT | awk '{ print $2 }'`; do
-			kill -9 $i
-		done
-		umount $MNTPT
-		status=$?
-
-	fi
-
-fi
-
-# exit with umount status
-exit $status
+exit $RC
 

@@ -31,7 +31,11 @@ case "$1" in
 		# check the distribution and do specific stuff
 		binpath=bin
 		cups=cupsys
-		if grep -q "$jaunty" /etc/issue; then
+		if grep -q "$karmic" /etc/issue; then
+			echo "This is $karmic!"
+			distro=karmic
+			cups=cups
+		elif grep -q "$jaunty" /etc/issue; then
 			echo "This is $jaunty!"
 			distro=jaunty
 			cups=cups
@@ -144,16 +148,16 @@ case "$1" in
 		done
 
   # patch package configfile
-	 [ -e /etc/linuxmuster-client.conf ] && cp /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
-	 if grep -q ^TEMPLATE_USER /etc/linuxmuster-client.conf; then
-		 sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i /etc/linuxmuster-client.conf
+	 [ -e /etc/linuxmuster-client/config ] && cp /etc/linuxmuster-client/config /etc/linuxmuster-client/config.dpkg-old
+	 if grep -q ^TEMPLATE_USER /etc/linuxmuster-client/config; then
+		 sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i /etc/linuxmuster-client/config
 	 else
-		 echo "TEMPLATE_USER=$template_user" > /etc/linuxmuster-client.conf
+		 echo "TEMPLATE_USER=$template_user" > /etc/linuxmuster-client/config
 	 fi
- 	if grep -q ^FIREFOX /etc/linuxmuster-client.conf; then
-		 sed -e "s|^FIREFOX=.*|FIREFOX=$firefox|" -i /etc/linuxmuster-client.conf
+ 	if grep -q ^FIREFOX /etc/linuxmuster-client/config; then
+		 sed -e "s|^FIREFOX=.*|FIREFOX=$firefox|" -i /etc/linuxmuster-client/config
 	 else
-		 echo "FIREFOX=$firefox" >> /etc/linuxmuster-client.conf
+		 echo "FIREFOX=$firefox" >> /etc/linuxmuster-client/config
  	fi
 
 		# remove hal's obsolete mountpolicies

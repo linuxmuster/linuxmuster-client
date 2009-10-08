@@ -7,7 +7,7 @@
 #
 
 # source settings
-. /etc/linuxmuster-client.conf || exit 1
+. /etc/linuxmuster-client/config || exit 1
 . /usr/share/linuxmuster-client/config || exit 1
 . /usr/share/linuxmuster-client/helperfunctions.sh || exit 1
 
@@ -53,8 +53,8 @@ fi
 
 # iterate over profile directories and copy them to users home
 for i in $PROFILE_DIRS; do
-	[ -e "$HOME/$i" ] && rm -rf $HOME/$i
-	[ -e "$PROFILE_HOME/$i" ] && cp -a $PROFILE_HOME/$i $HOME
+ [ -e "$HOME/$i" ] || mkdir -p $HOME/$i
+	[ -e "$HOME/$i" -a -e "$PROFILE_HOME/$i" ] && rsync -a --delete --exclude-from /etc/linuxmuster-client/profile.exclude $PROFILE_HOME/$i/ $HOME/$i/
 	[ -e "$HOME/$i" ] && chown -R $USER $HOME/$i
 done
 

@@ -1,3 +1,15 @@
+linuxmuster-client (0.9.13-1) testing; urgency=low
+
+  * some improvements according to user dir syncing at begin and end of session.
+    (-> config, profile, mount.sh, umount.sh, Default).
+  * added iocharset=utf8 to and removed wsize,rsize mount options from pam_mount.conf.xml template.
+  * improved package configuration: values for ldap server and base dn were read from package ldap-auth-config.
+  * moved client config file to /etc/linuxmuster-client/config
+  * added config file /etc/linuxmuster-client/profile.exclude
+  * added experimental support for Karmic Koala.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Thu, 8 Oct 2009 21:42:49 +0200
+
 linuxmuster-client (0.9.12-1) testing; urgency=low
 
   * removed common-* pam configs for jaunty.

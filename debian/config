@@ -6,7 +6,7 @@
 . /usr/share/debconf/confmodule
 
 # source config
-[ -e /etc/linuxmuster-client.conf ] && . /etc/linuxmuster-client.conf
+[ -e /etc/linuxmuster-client/config ] && . /etc/linuxmuster-client/config
 
 db_version 2.0
 db_capb backup
@@ -16,21 +16,27 @@ PRIORITY="critical"
 db_title "linuxmuster-client Konfiguration"
 
 # ldap server uri
+db_get ldap-auth-config/ldapns/ldap-server || true
+db_set shared/ldapns/ldap-server ${RET#*\/\/} || true
 while [ -z "$INPUT" ]; do
   db_input $PRIORITY shared/ldapns/ldap-server || true
   db_go
   db_get shared/ldapns/ldap-server || true
   INPUT=$RET
 done
+db_set ldap-auth-config/ldapns/ldap-server $INPUT || true
 
 # ldap basedn
 unset INPUT
+db_get ldap-auth-config/ldapns/base-dn || true
+db_set shared/ldapns/base-dn $RET || true
 while [ -z "$INPUT" ]; do
   db_input $PRIORITY shared/ldapns/base-dn || true
   db_go
   db_get shared/ldapns/base-dn || true
   INPUT=$RET
 done
+db_set ldap-auth-config/ldapns/base-dn $INPUT || true
 
 # template user
 db_set linuxmuster-client/template_user $TEMPLATE_USER || true
@@ -38,10 +44,11 @@ db_input $PRIORITY linuxmuster-client/template_user || true
 db_go
 
 # firefox
+[ -n "$FIREFOX" ] && FIREFOX=`echo $FIREFOX | tr A-Z a-z`
 if [ "$FIREFOX" = "yes" ]; then
-	db_set linuxmuster-client/firefox true || true
+ db_set linuxmuster-client/firefox true || true
 else
-	db_set linuxmuster-client/firefox false || true
+ db_set linuxmuster-client/firefox false || true
 fi
 db_input $PRIORITY linuxmuster-client/firefox || true
 db_go

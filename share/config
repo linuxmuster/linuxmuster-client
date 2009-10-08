@@ -23,5 +23,6 @@ SAMBAHOME="/home/samba"
 NETLOGONDIR="$SAMBAHOME/netlogon"
 PROGSDIR="$SAMBAHOME/progs"
 CDSDIR="$SAMBAHOME/cds"
+USERDIRS="Desktop .kde .local"
 MANDATORY_GROUPS="plugdev powerdev pulse-rt"
 

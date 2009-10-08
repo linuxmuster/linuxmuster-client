@@ -9,13 +9,10 @@ if test -n "$USER" && ! grep -q ^${USER}: /etc/passwd; then
 	. /usr/share/linuxmuster-client/helperfunctions.sh
 
 	# Redirects KDE Home to /tmp
-	export KDEHOME=/tmp/.kde_${USER}
+	export KDEHOME=/tmp/.kde-${USER}
 
 	# user's desktop has also to be in /tmp
-	export DESKTOP=/tmp/Desktop_${USER}
-
-	# user's .local has also to be in /tmp
-	export DOTLOCAL=/tmp/.local_${USER}
+	export DESKTOP=/tmp/Desktop-${USER}
 
 	# Redirects access token file for dcopserver to /tmp
 	export ICEAUTHORITY=/tmp/${USER}_ICEauthority_${HOSTNAME}
