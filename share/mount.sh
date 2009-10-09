@@ -62,16 +62,3 @@ for i in $USERDIRS; do
  chmod 700 /tmp/${i}-${USER}
 done
 
-# handle .cache and .gvfs
-for i in .cache .gvfs; do
- [ -e "/tmp/${i}-${USER}" ] && rm -rf /tmp/${i}-${USER}
- [ -e "$HOME/$i" ] && rm -rf $HOME/$i
- mkdir -p /tmp/${i}-${USER}
- chown $USER /tmp/${i}-${USER}
- chmod 700 /tmp/${i}-${USER}
- ln -s /tmp/${i}-${USER} $HOME/${i}
-done
-
-# remove .pulse dir
-rm -rf $HOME/.pulse
-

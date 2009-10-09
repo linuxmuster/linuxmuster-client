@@ -2,4 +2,7 @@
 cifs*
 keyrings/
 metacity/sessions/
+share/tracker/
+share/Trash/
+tracker/
 

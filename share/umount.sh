@@ -57,12 +57,6 @@ if [ "$HOME" = "$MNTPT" ]; then
   chmod 700 $HOME/$i
  done
 
- # handle .cache and .gvfs
- for i in .cache .gvfs; do
-  [ -e "/tmp/${i}-${USER}" ] && rm -rf /tmp/${i}-${USER}
-  [ -e "$HOME/$i" ] && rm -rf $HOME/$i
- done
-
 fi
 
 # umount given share

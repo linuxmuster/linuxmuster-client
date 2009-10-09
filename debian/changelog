@@ -1,3 +1,13 @@
+linuxmuster-client (0.9.14-1) testing; urgency=low
+
+  * added iocharset=utf8 to and removed wsize,rsize mount options from pam_mount.conf.xml template for hardy and intrepid also.
+  * added more excludes to profile.exclude.
+  * minor code cleanup in helperfunctions.sh.
+  * added "exit 0" at the end of /etc/gdm/PostLogin/Default (an error causes Hardy's gdm to cancle the user session.
+  * removed obsolete config file hardy/templates/etc/security/pam_mount.conf.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Fri, 9 Oct 2009 19:48:13 +0200
+
 linuxmuster-client (0.9.13-1) testing; urgency=low
 
   * some improvements according to user dir syncing at begin and end of session.

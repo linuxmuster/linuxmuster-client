@@ -13,7 +13,7 @@ stringinstring() {
 
 # get user homedir
 get_userhome() {
-	userhomecache=/tmp/.home-$USER
+	local userhomecache=/tmp/.home-$USER
 	if [ ! -s "$userhomecache" ]; then
 		getent passwd $USER | cut -f6 -d: > $userhomecache
 		chmod 600 $userhomecache
@@ -24,9 +24,8 @@ get_userhome() {
 
 # checking if directory is empty, in that case it returns 0
 check_empty_dir() {
-  unset RET
+  local RET
   RET=$(ls -A1 $1 2>/dev/null | wc -l)
-  [ "$RET" = "0" ] && return 0
-  return 1
+  return $RET
 }
 
