@@ -17,26 +17,41 @@ db_title "linuxmuster-client Konfiguration"
 
 # ldap server uri
 db_get ldap-auth-config/ldapns/ldap-server || true
-db_set shared/ldapns/ldap-server ${RET#*\/\/} || true
-while [ -z "$INPUT" ]; do
+URI=$RET
+IP=$(echo $URI \
+ | sed 's/\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\).*/_\1/' \
+ | sed 's/.*_//' \
+ | sed -n 's/\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)/\1/p' \
+)
+if [ -n "$IP" ]; then
+ db_set shared/ldapns/ldap-server $IP || true
+fi
+while [ -z "$IP_NEW" ]; do
   db_input $PRIORITY shared/ldapns/ldap-server || true
   db_go
   db_get shared/ldapns/ldap-server || true
-  INPUT=$RET
+  IP_NEW=$RET
 done
-db_set ldap-auth-config/ldapns/ldap-server $INPUT || true
+URI_NEW=ldap://$IP_NEW/
+if [ "$URI" != "$URI_NEW" ]; then
+ db_set ldap-auth-config/ldapns/ldap-server $URI_NEW || true
+fi
 
 # ldap basedn
-unset INPUT
 db_get ldap-auth-config/ldapns/base-dn || true
-db_set shared/ldapns/base-dn $RET || true
-while [ -z "$INPUT" ]; do
+BASEDN=$RET
+if [ -n "$BASEDN" ]; then
+ db_set shared/ldapns/base-dn $BASEDN || true
+fi
+while [ -z "$BASEDN_NEW" ]; do
   db_input $PRIORITY shared/ldapns/base-dn || true
   db_go
   db_get shared/ldapns/base-dn || true
-  INPUT=$RET
+  BASEDN_NEW=$RET
 done
-db_set ldap-auth-config/ldapns/base-dn $INPUT || true
+if [ "$BASEDN" != "$BASEDN_NEW" ]; then
+ db_set ldap-auth-config/ldapns/base-dn $BASEDN_NEW || true
+fi
 
 # template user
 db_set linuxmuster-client/template_user $TEMPLATE_USER || true

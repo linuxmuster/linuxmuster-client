@@ -1,3 +1,9 @@
+linuxmuster-client (0.9.14-2) testing; urgency=low
+
+  * improved value sync between ldap-auth-config and linuxmuster-client during package configuration.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sat, 10 Oct 2009 12:33:39 +0200
+
 linuxmuster-client (0.9.14-1) testing; urgency=low
 
   * added iocharset=utf8 to and removed wsize,rsize mount options from pam_mount.conf.xml template for hardy and intrepid also.
