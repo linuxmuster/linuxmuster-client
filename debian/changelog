@@ -1,3 +1,9 @@
+linuxmuster-client (0.9.14-3) testing; urgency=low
+
+  * modified supported_distros for Ubuntu 9.10.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Wed, 04 Nov 2009 08:11:13 +0100
+
 linuxmuster-client (0.9.14-2) testing; urgency=low
 
   * improved value sync between ldap-auth-config and linuxmuster-client during package configuration.
