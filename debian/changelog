@@ -1,3 +1,18 @@
+linuxmuster-client (0.9.15-0) testing; urgency=low
+
+  * fixed broken group memberships, added pam_group.so to common-auth.
+  * moved package configuration to postinst.
+  * moved /etc/gdm/PostLogin/Default to /usr/share/linuxmuster-client/copy-template.sh,
+    which will be sourced by mount.sh.
+  * removed etch from supported distros.
+  * added new config variable MYFILES.
+  * added desktop link to MYFILES if set.
+  * added templates for APPS_BASEDIR and MYFILES.
+  * fixed: parts of profile were not copied.
+  * removed keyrings/ from profile.exclude.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sun, 08 Nov 2009 12:18:27 +0100
+
 linuxmuster-client (0.9.14-3) testing; urgency=low
 
   * modified supported_distros for Ubuntu 9.10.

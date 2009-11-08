@@ -1,2 +1,0 @@
-# 0 = don't start, 1 = start
-AVAHI_DAEMON_START=0

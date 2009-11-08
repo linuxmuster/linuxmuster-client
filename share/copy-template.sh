@@ -1,15 +1,9 @@
-#!/bin/bash
 #
-# copy default user profile
+# copy template user profile
 #
-# 11.07.2009
+# 08.11.2009
 # Jörg Richter/Thomas Schmitt
 #
-
-# source settings
-. /etc/linuxmuster-client/config || exit 1
-. /usr/share/linuxmuster-client/config || exit 1
-. /usr/share/linuxmuster-client/helperfunctions.sh || exit 1
 
 # quit if TEMPLATE_USER is not set
 [ -z "$TEMPLATE_USER" ] && exit 0
@@ -54,9 +48,21 @@ fi
 # iterate over profile directories and copy them to users home
 for i in $PROFILE_DIRS; do
  [ -e "$HOME/$i" ] || mkdir -p $HOME/$i
-	[ -e "$HOME/$i" -a -e "$PROFILE_HOME/$i" ] && rsync -a --delete --exclude-from /etc/linuxmuster-client/profile.exclude $PROFILE_HOME/$i/ $HOME/$i/
+	[ -e "$HOME/$i" -a -e "$PROFILE_HOME/$i" ] && rsync -rlpt --inplace --delete --exclude-from /etc/linuxmuster-client/profile.exclude $PROFILE_HOME/$i/ $HOME/$i/
 	[ -e "$HOME/$i" ] && chown -R $USER $HOME/$i
 done
+
+# link my files folder to desktop
+if [ -n "$MYFILES" ]; then
+ [ -e "$HOME/$MYFILES" -a ! -d "$HOME/$MYFILES" ] && mv "$HOME/$MYFILES" "$HOME/$MYFILES.BAK"
+ if [ ! -e "$HOME/$MYFILES" ]; then
+  mkdir -p "$HOME/$MYFILES"
+  chown $USER "$HOME/$MYFILES"
+ fi
+ rm -rf "$HOME/Desktop/$MYFILES"
+ ln -s "$HOME/$MYFILES" "$HOME/Desktop/$MYFILES"
+ chown $USER "$HOME/Desktop/$MYFILES"
+fi
 
 # finally sets permissions for $STUDENTSHOME
 if ! check_empty_dir $STUDENTSHOME; then

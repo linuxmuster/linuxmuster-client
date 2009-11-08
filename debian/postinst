@@ -46,18 +46,6 @@ case "$1" in
 		elif grep -q "$hardy" /etc/issue; then
 			echo "This is $hardy!"
 			distro=hardy
-		elif grep -q "$etch" /etc/issue; then
-			echo "This is $etch!"
-			distro=etch
-			# adding system groups and users
-			for i in fuse rdma tss; do
-				if ! grep -q ^${i}: /etc/group; then
-					addgroup --system $i
-				fi
-			done
-			if ! grep -q ^tss: /etc/passwd; then
-				adduser --system --no-create-home --ingroup tss --disabled-login tss
-			fi
 		else
 			echo "This distribution is not supported!"
 			exit 1
@@ -100,6 +88,9 @@ case "$1" in
 			fi
 		fi
 
+  # configure package
+  . /usr/share/linuxmuster-client/configure
+
 		# basedn
 		db_get shared/ldapns/ldap-server || true
 		serverip=$RET
@@ -124,8 +115,13 @@ case "$1" in
   db_get linuxmuster-client/firefox || true
   if $RET; then firefox=yes; else firefox=no; fi
 
-		# we need this directory
-		[ -d /etc/gdm/PostLogin ] || mkdir -p /etc/gdm/PostLogin
+  # my files folder
+  db_get linuxmuster-client/myfiles || true
+  myfiles="$RET"
+
+  # apps base dir
+  db_get linuxmuster-client/apps_basedir || true
+  apps_basedir="$RET"
 
 		# patching configuration files
 		echo "Patching configuration ..."
@@ -159,6 +155,16 @@ case "$1" in
 	 else
 		 echo "FIREFOX=$firefox" >> /etc/linuxmuster-client/config
  	fi
+	 if grep -q ^MYFILES /etc/linuxmuster-client/config; then
+		 sed -e "s|^MYFILES=.*|MYFILES=\"$myfiles\"|" -i /etc/linuxmuster-client/config
+	 else
+		 echo "MYFILES=\"$myfiles\"" > /etc/linuxmuster-client/config
+	 fi
+	 if grep -q ^APPS_BASEDIR /etc/linuxmuster-client/config; then
+		 sed -e "s|^APPS_BASEDIR=.*|APPS_BASEDIR=\"$apps_basedir\"|" -i /etc/linuxmuster-client/config
+	 else
+		 echo "APPS_BASEDIR=\"$apps_basedir\"" > /etc/linuxmuster-client/config
+	 fi
 
 		# remove hal's obsolete mountpolicies
 		if [ -e /etc/hal/fdi/policy/mountpolicies.fdi ]; then

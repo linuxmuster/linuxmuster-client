@@ -1,10 +1,8 @@
-etc/Default	etc/gdm/PostLogin/
 etc/config	etc/linuxmuster-client/
 etc/profile.exclude	etc/linuxmuster-client/
 common/*	var/lib/linuxmuster-client/common/
 hardy/*	var/lib/linuxmuster-client/hardy/
 jaunty/*	var/lib/linuxmuster-client/jaunty/
-etch/*	var/lib/linuxmuster-client/etch/
 share/*	usr/share/linuxmuster-client/
 debian/linuxmuster-hostname	etc/init.d/
 

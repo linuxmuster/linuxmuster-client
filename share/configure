@@ -1,15 +1,18 @@
-#!/bin/sh
-
-# 11.07.2009
-
-# Source debconf library.
-. /usr/share/debconf/confmodule
+# package configuration
+# sourced by postinst
+# 07.11.2009
+# Thomas Schmitt <schmitt@lmz-bw.de
+# GPL v3
+#
 
 # source config
 [ -e /etc/linuxmuster-client/config ] && . /etc/linuxmuster-client/config
 
-db_version 2.0
-db_capb backup
+# source old config
+if [ -e /etc/linuxmuster-client.conf ]; then
+ . /etc/linuxmuster-client.conf
+ mv /etc/linuxmuster-client.conf /etc/linuxmuster-client.conf.dpkg-old
+fi
 
 PRIORITY="critical"
 
@@ -28,7 +31,7 @@ if [ -n "$IP" ]; then
 fi
 while [ -z "$IP_NEW" ]; do
   db_input $PRIORITY shared/ldapns/ldap-server || true
-  db_go
+  db_go || true
   db_get shared/ldapns/ldap-server || true
   IP_NEW=$RET
 done
@@ -45,7 +48,7 @@ if [ -n "$BASEDN" ]; then
 fi
 while [ -z "$BASEDN_NEW" ]; do
   db_input $PRIORITY shared/ldapns/base-dn || true
-  db_go
+  db_go || true
   db_get shared/ldapns/base-dn || true
   BASEDN_NEW=$RET
 done
@@ -54,20 +57,28 @@ if [ "$BASEDN" != "$BASEDN_NEW" ]; then
 fi
 
 # template user
-db_set linuxmuster-client/template_user $TEMPLATE_USER || true
+db_set linuxmuster-client/template_user "$TEMPLATE_USER" || true
 db_input $PRIORITY linuxmuster-client/template_user || true
-db_go
+db_go || true
 
 # firefox
 [ -n "$FIREFOX" ] && FIREFOX=`echo $FIREFOX | tr A-Z a-z`
 if [ "$FIREFOX" = "yes" ]; then
- db_set linuxmuster-client/firefox true || true
+ BOOL=true
 else
- db_set linuxmuster-client/firefox false || true
+ BOOL=false
 fi
+db_set linuxmuster-client/firefox "$BOOL" || true
 db_input $PRIORITY linuxmuster-client/firefox || true
-db_go
+db_go || true
 
-# finish debconf stuff
-db_stop
+# my files folder
+db_set linuxmuster-client/myfiles "$MYFILES" || true
+db_input $PRIORITY linuxmuster-client/myfiles || true
+db_go || true
+
+# apps settings folder
+db_set linuxmuster-client/apps_basedir "$APPS_BASEDIR" || true
+db_input $PRIORITY linuxmuster-client/apps_basedir || true
+db_go || true
 

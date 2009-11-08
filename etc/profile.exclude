@@ -1,7 +1,7 @@
 # list of directories and files to be excluded from sync with profile of template user
 cifs*
-keyrings/
 metacity/sessions/
+share/gvfs-metadata/
 share/tracker/
 share/Trash/
 tracker/

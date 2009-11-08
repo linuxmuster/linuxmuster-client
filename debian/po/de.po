@@ -41,3 +41,23 @@ msgstr ""
 msgid "Copy initial Firefox profile to user's home?"
 msgstr "Soll das Firefox-Profil des Vorlagen-Benutzers als Startprofil verwendet werden?"
 
+#. Type: string
+#. Description
+#: ../templates:5
+msgid "Name of the folder which contains the user files."
+msgstr "Verzeichnisname fuer die Benutzerdateien (z.B. Eigene Dateien)."
+
+#. Type: string
+#. Description
+#: ../templates:5
+msgid ""
+"Folder will be created in user's home if it does not exist and linked to the desktop."
+msgstr ""
+"Verzeichnis wird -falls nicht vorhanden - im Benutzerhome erstellt und auf den Desktop verlinkt."
+
+#. Type: string
+#. Description
+#: ../templates:6
+msgid "Name of the folder in user's home which will contain the application settings (Firefox etc.)."
+msgstr "Name des Verzeichnisses im Benutzerhome, das Anwendungseinstellungen enthaelt (fuer Firefox z.B.)."
+

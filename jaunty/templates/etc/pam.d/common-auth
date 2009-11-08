@@ -24,3 +24,6 @@ auth	requisite			pam_deny.so
 auth	required			pam_permit.so
 # and here are more per-package modules (the "Additional" block)
 # end of pam-auth-update config
+
+auth optional pam_group.so
+

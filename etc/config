@@ -13,3 +13,6 @@ FIREFOX=
 # Firefox profile directory, below $APPS_BASEDIR
 FIREFOX_PROFILE=firefox
 
+# my files folder
+MYFILES="Eigene Dateien"
+
