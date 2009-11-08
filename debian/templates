@@ -31,5 +31,5 @@ Template: linuxmuster-client/apps_basedir
 Type: string
 Default: Einstellungen
 _Description: Name of the folder in user's home which will contain the application settings (Firefox etc.).
- Folder will be created in user's home if it does not exist and linked to the desktop.
+ Folder will be created in user's home if it does not exist.
 
