@@ -11,7 +11,7 @@ linuxmuster-client (0.9.15-0) testing; urgency=low
   * fixed: parts of profile were not copied.
   * removed keyrings/ from profile.exclude.
 
- -- Thomas Schmitt <schmitt@lmz-bw.de>  Sun, 08 Nov 2009 12:18:27 +0100
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Sun, 08 Nov 2009 14:05:21 +0100
 
 linuxmuster-client (0.9.14-3) testing; urgency=low
 
