@@ -1,3 +1,9 @@
+linuxmuster-client (0.9.15-1) testing; urgency=low
+
+  * removed sourcing old config file /etc/linuxmuster-client.conf from init script.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Tue, 10 Nov 2009 19:46:26 +0100
+
 linuxmuster-client (0.9.15-0) testing; urgency=low
 
   * fixed broken group memberships, added pam_group.so to common-auth.

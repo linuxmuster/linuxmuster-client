@@ -12,7 +12,6 @@
 
 # read default variables
 . /usr/share/linuxmuster-client/config || exit 1
-. /etc/linuxmuster-client.conf || exit 1
 
 # read hostname
 clientname=`cat /etc/hostname`
