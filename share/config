@@ -1,6 +1,14 @@
-# linuxmuster specific variables
-# don't change this unless you know exactly what you are doing
+# linuxmuster client package specific variables
+# don't change this, it will be overwritten by package upgrade
 # <schmitt@lmz-bw.de>
+# 12.12.2009
+#
+
+# client package related
+SYSCONFDIR="/etc/linuxmuster-client"
+USERCONFIG="$SYSCONFDIR/config"
+MOUNTHOOKSDIR="$SYSCONFDIR/mount.d"
+UMOUNTHOOKSDIR="$SYSCONFDIR/umount.d"
 
 # should be the same as on the server
 # in /usr/share/linuxmuster/config/dist.conf
@@ -23,5 +31,4 @@ SAMBAHOME="/home/samba"
 NETLOGONDIR="$SAMBAHOME/netlogon"
 PROGSDIR="$SAMBAHOME/progs"
 CDSDIR="$SAMBAHOME/cds"
-USERDIRS="Desktop .kde .local"
 

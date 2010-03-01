@@ -1,3 +1,23 @@
+linuxmuster-client (0.9.17-1) testing; urgency=low
+
+  * experimental support for Ubuntu lucid.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Mon, 01 Mar 2010 21:41:04 +0100
+
+linuxmuster-client (0.9.16-1) testing; urgency=low
+
+  * added hook dirs /etc/linuxmuster-client/mount.d and /etc/linuxmuster-client/umount.d
+    for user scripts to be sourced after mount and before umount of user's home.
+  * added some new environment variables to /usr/share/linuxmuster-client/config.
+  * removed USERDIRS variable from /usr/share/linuxmuster-client/config, renamed to LINKDIRS.
+  * added LINKDIRS variable to /etc/linuxmuster-client/config for directories,
+    which needed to be temporarily linked to /tmp during user session.
+  * some modifications in mount.sh and umount.sh due to above changes.
+  * obsolete configfile /etc/gdm/PostLogin/Default will be moved to Default.dpkg-old
+    during postinst if present.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Fri, 18 Dec 2009 10:55:53 +0100
+
 linuxmuster-client (0.9.15-1) testing; urgency=low
 
   * removed sourcing old config file /etc/linuxmuster-client.conf from init script.

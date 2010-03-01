@@ -1,5 +1,9 @@
-#! /bin/bash
-# postinst script for linuxmuster
+#!/bin/bash
+#
+# postinst script for linuxmuster-client
+#
+# Thomas Schmitt <schmitt@lmz-bw.de>
+# 18.12.2009
 #
 # see: dh_installdeb(1)
 
@@ -31,7 +35,11 @@ case "$1" in
 		# check the distribution and do specific stuff
 		binpath=bin
 		cups=cupsys
-		if grep -q "$karmic" /etc/issue; then
+		if grep -q "$lucid" /etc/issue; then
+			echo "This is $lucid!"
+			distro=lucid
+			cups=cups
+		elif grep -q "$karmic" /etc/issue; then
 			echo "This is $karmic!"
 			distro=karmic
 			cups=cups
@@ -144,47 +152,67 @@ case "$1" in
 		done
 
   # patch package configfile
-	 [ -e /etc/linuxmuster-client/config ] && cp /etc/linuxmuster-client/config /etc/linuxmuster-client/config.dpkg-old
-	 if grep -q ^TEMPLATE_USER /etc/linuxmuster-client/config; then
-		 sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i /etc/linuxmuster-client/config
+	 [ -e $USERCONFIG ] && cp $USERCONFIG $USERCONFIG.dpkg-old
+	 if grep -q ^TEMPLATE_USER $USERCONFIG; then
+		 sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i $USERCONFIG
 	 else
-		 echo "TEMPLATE_USER=$template_user" > /etc/linuxmuster-client/config
+		 echo "TEMPLATE_USER=$template_user" > $USERCONFIG
 	 fi
- 	if grep -q ^FIREFOX /etc/linuxmuster-client/config; then
-		 sed -e "s|^FIREFOX=.*|FIREFOX=$firefox|" -i /etc/linuxmuster-client/config
+ 	if grep -q ^FIREFOX $USERCONFIG; then
+		 sed -e "s|^FIREFOX=.*|FIREFOX=$firefox|" -i $USERCONFIG
 	 else
-		 echo "FIREFOX=$firefox" >> /etc/linuxmuster-client/config
+		 echo "FIREFOX=$firefox" >> $USERCONFIG
  	fi
-	 if grep -q ^MYFILES /etc/linuxmuster-client/config; then
-		 sed -e "s|^MYFILES=.*|MYFILES=\"$myfiles\"|" -i /etc/linuxmuster-client/config
+	 if grep -q ^MYFILES $USERCONFIG; then
+		 sed -e "s|^MYFILES=.*|MYFILES=\"$myfiles\"|" -i $USERCONFIG
 	 else
-		 echo "MYFILES=\"$myfiles\"" > /etc/linuxmuster-client/config
+		 echo "MYFILES=\"$myfiles\"" > $USERCONFIG
 	 fi
-	 if grep -q ^APPS_BASEDIR /etc/linuxmuster-client/config; then
-		 sed -e "s|^APPS_BASEDIR=.*|APPS_BASEDIR=\"$apps_basedir\"|" -i /etc/linuxmuster-client/config
+	 if grep -q ^APPS_BASEDIR $USERCONFIG; then
+		 sed -e "s|^APPS_BASEDIR=.*|APPS_BASEDIR=\"$apps_basedir\"|" -i $USERCONFIG
 	 else
-		 echo "APPS_BASEDIR=\"$apps_basedir\"" > /etc/linuxmuster-client/config
+		 echo "APPS_BASEDIR=\"$apps_basedir\"" > $USERCONFIG
 	 fi
 
+  # check for LINKDIRS variable, new in 0.9.16-1
+  if ! grep -q LINKDIRS $USERCONFIG; then
+   echo >> $USERCONFIG
+   echo "# directories in user's home, which will be linked to /tmp on logon" >> $USERCONFIG
+   echo "LINKDIRS=\"Desktop .kde .local\"" >> $USERCONFIG
+  fi
+
+  # remove obsolete /etc/gdm/PostLogin/Default
+  cfile=/etc/gdm/PostLogin/Default
+  if [ -e "$cfile" ]; then
+   if grep -q "# 11.07.2009" $cfile; then
+    mv $cfile ${cfile}.dpkg-old
+    chmod 644 ${cfile}.dpkg-old
+   fi
+  fi
+
 		# remove hal's obsolete mountpolicies
-		if [ -e /etc/hal/fdi/policy/mountpolicies.fdi ]; then
-			mv /etc/hal/fdi/policy/mountpolicies.fdi /etc/hal/fdi/policy/mountpolicies.fdi.dpkg-old
+  cfile=/etc/hal/fdi/policy/mountpolicies.fdi
+		if [ -e "$cfile" ]; then
+			mv $cfile ${cfile}.dpkg-old
 			[ -e /etc/init.d/dbus ] && /etc/init.d/dbus restart
 		fi
 
 		# remove ivman from Xsession.options
-		if [ -s /etc/X11/Xsession.options ]; then
-			if grep -q use-session-ivman /etc/X11/Xsession.options; then
-				cp /etc/X11/Xsession.options /etc/X11/Xsession.options.dpkg-old
-				grep -v use-session-ivman /etc/X11/Xsession.options.dpkg-old > /etc/X11/Xsession.options
+  cfile=/etc/X11/Xsession.options
+		if [ -s "$cfile" ]; then
+			if grep -q use-session-ivman $cfile; then
+				cp $cfile ${cfile}.dpkg-old
+				grep -v use-session-ivman ${cfile}.dpkg-old > $cfile
 			fi
 		fi
 
 		# remove ivman's default
-		[ -e /etc/default/ivman ] && mv /etc/default/ivman /etc/default/ivman.dpkg-old
+  cfile=/etc/default/ivman
+		[ -e "$cfile" ] && mv $cfile ${cfile}.dpkg-old
 
 		# remove ivman script from dapper
-		[ -e /etc/X11/ivman-xsession ] && mv /etc/X11/ivman-xsession /etc/X11/ivman-xsession.dpkg-old
+  cfile=/etc/X11/ivman-xsession
+		[ -e "$cfile" ] && mv $cfile ${cfile}.dpkg-old
 
 		echo "Note: You have to reboot the client if you have installed the package for the first time!"
 

@@ -1,18 +1,25 @@
+# linuxmuster client package user editable variables
+# <schmitt@lmz-bw.de>
+# 12.12.2009
+#
 # mandatory profile directorys
 PROFILE_DIRS="Desktop .config .local .gconf .gconfd .gnome2 .gnome2_private"
 
 # profile template user
-TEMPLATE_USER=
+TEMPLATE_USER=linuxadmin
 
 # Basedir for application settings
-APPS_BASEDIR=Einstellungen
+APPS_BASEDIR="Einstellungen"
 
 # Firefox
 # copy initial firefox profile from template user to user? (yes|no)
-FIREFOX=
+FIREFOX=yes
 # Firefox profile directory, below $APPS_BASEDIR
 FIREFOX_PROFILE=firefox
 
 # my files folder
 MYFILES="Eigene Dateien"
+
+# directories in user's home, which will be linked to /tmp on logon
+LINKDIRS="Desktop .kde .local"
 
