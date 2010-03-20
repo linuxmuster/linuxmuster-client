@@ -174,6 +174,14 @@ case "$1" in
 		 echo "APPS_BASEDIR=\"$apps_basedir\"" > $USERCONFIG
 	 fi
 
+  # fixing ldap.conf to ignore self signed server certificate with queries from localhost
+  conffile=/etc/ldap/ldap.conf
+  if ! grep -q "TLS_REQCERT never" $conffile &> /dev/null; then
+   echo "Fixing $conffile ..."
+   cp $conffile ${conffile}.dpkg-old
+   echo "TLS_REQCERT never" >> $conffile
+  fi
+
   # check for LINKDIRS variable, new in 0.9.16-1
   if ! grep -q LINKDIRS $USERCONFIG; then
    echo >> $USERCONFIG

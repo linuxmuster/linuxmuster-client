@@ -1,3 +1,9 @@
+linuxmuster-client (0.9.18-0) testing; urgency=low
+
+  * pam_ldap uses now start tls.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Thu, 18 Mar 2010 23:33:30 +0100
+
 linuxmuster-client (0.9.17-1) testing; urgency=low
 
   * experimental support for Ubuntu lucid.
