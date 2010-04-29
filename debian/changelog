@@ -1,3 +1,9 @@
+linuxmuster-client (0.9.18-1) testing; urgency=low
+
+  * updated entry for Ubuntu 10.04 LTS in supported_distros.
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Thu, 29 Apr 2010 12:37:18 +0200
+
 linuxmuster-client (0.9.18-0) testing; urgency=low
 
   * pam_ldap uses now start tls.
