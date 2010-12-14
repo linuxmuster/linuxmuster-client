@@ -1,3 +1,9 @@
+linuxmuster-client (0.9.19-0) testing; urgency=low
+
+  * updated entry for Ubuntu 10.04.x in supported_distros (closes #401).
+
+ -- Thomas Schmitt <schmitt@lmz-bw.de>  Mon, 13 Dec 2010 17:38:47 +0100
+
 linuxmuster-client (0.9.18-1) testing; urgency=low
 
   * updated entry for Ubuntu 10.04 LTS in supported_distros.
