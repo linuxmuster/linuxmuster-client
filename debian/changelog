@@ -1,3 +1,9 @@
+linuxmuster-client (0.9.20-0) testing; urgency=low
+
+   * First package with local userhome
+
+  -- Frank Schiebel <frank@linuxmuster.net>  Wed, 02 Mar 2011 15:40:00 +0100
+
 linuxmuster-client (0.9.19-0) testing; urgency=low
 
   * updated entry for Ubuntu 10.04.x in supported_distros (closes #401).

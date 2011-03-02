@@ -1,0 +1,7 @@
+#!/bin/sh
+
+date > /tmp/postsession.log
+
+/usr/share/linuxmuster-client/postsession.sh $USER $HOME >> /tmp/postsession.log
+
+exit 0
