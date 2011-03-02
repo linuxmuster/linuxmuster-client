@@ -1,4 +1,2 @@
-var/lib/linuxmuster-client/hardy	var/lib/linuxmuster-client/intrepid
-var/lib/linuxmuster-client/jaunty	var/lib/linuxmuster-client/karmic
-var/lib/linuxmuster-client/jaunty	var/lib/linuxmuster-client/lucid
-
+var/lib/linuxmuster-client/hardy    var/lib/linuxmuster-client/intrepid
+var/lib/linuxmuster-client/jaunty   var/lib/linuxmuster-client/karmic

@@ -1,8 +1,9 @@
-etc/config	etc/linuxmuster-client/
-etc/profile.exclude	etc/linuxmuster-client/
-common/*	var/lib/linuxmuster-client/common/
-hardy/*	var/lib/linuxmuster-client/hardy/
-jaunty/*	var/lib/linuxmuster-client/jaunty/
-share/*	usr/share/linuxmuster-client/
-debian/linuxmuster-hostname	etc/init.d/
+etc/config  etc/linuxmuster-client/
+etc/profile.exclude etc/linuxmuster-client/
+common/*    var/lib/linuxmuster-client/common/
+hardy/* var/lib/linuxmuster-client/hardy/
+jaunty/*    var/lib/linuxmuster-client/jaunty/
+lucid/*     var/lib/linuxmuster-client/lucid/
+share/* usr/share/linuxmuster-client/
+debian/linuxmuster-hostname etc/init.d/
 
