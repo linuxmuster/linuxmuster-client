@@ -72,6 +72,8 @@ fi
 
 # check if there is a folder for configs, if not create it
 [ -d "$HOME/$SERVER_HOME/$APPS_BASEDIR" ] || mkdir -p "$HOME/$SERVER_HOME/$APPS_BASEDIR"
+ln -s  "$HOME/$SERVER_HOME/$APPS_BASEDIR" "$HOME/$APPS_BASEDIR"
+chown $USER "$HOME/$APPS_BASEDIR" -R
 
 # link usersettings profile
 OIFS="$IFS"
