@@ -13,10 +13,6 @@ SYNC_MODE="compat"
 # only active when USERPROFILE_MODE=1
 PROFILE_MANDATORY="Desktop,.local,.config,.nautilus,.gconf,.gconfd,.gnome2,.gnome2_private,.icons,.themes,.emerald,.fontconfig,.compiz"
 
-# User-config settings allowed for the following items
-# PROFILE_MANDATORY is ignored, only active when USERPROFILE_MODE=0
-PROFILE_USERSETTINGS_ALLOWED=".mozilla"
-
 # mount point for user's server home
 SERVER_HOME="Home_auf_Server"
 

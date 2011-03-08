@@ -45,12 +45,11 @@ fi
 [ "$HOME/$SERVER_HOME" = "$MNTPT" ] || exit 0
 
 # sync user profile
-if [ $SYNC_MODE == "compat" ]; then
-. /usr/share/linuxmuster-client/sync-profile.sh
+if [ $SYNC_MODE == "alternative" ]; then
+. /usr/share/linuxmuster-client/sync-profile-alternative.sh
 else
-. /usr/share/linuxmuster-client/sync-profile-2.sh
+. /usr/share/linuxmuster-client/sync-profile.sh
 fi
-
 
 # source mount hooks
 ls $MOUNTHOOKSDIR/* &> /dev/null || exit 0
