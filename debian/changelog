@@ -1,7 +1,9 @@
-linuxmuster-client (0.9.20-9) testing; urgency=low
+linuxmuster-client (0.9.20-11) testing; urgency=low
 
    * First package with local userhome
    * Added alternative sync-profile-script
+   * Moved firefox config to mount.d
+     * Patching firefox prefs.js in firefox.sh
 
  -- Frank Schiebel <frank@linuxmuster.net>  Wed, 02 Mar 2011 15:40:00 +0100
 
