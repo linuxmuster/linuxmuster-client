@@ -1,4 +1,4 @@
-linuxmuster-client (0.9.20-14) testing; urgency=low
+linuxmuster-client (0.9.20-15) testing; urgency=low
 
    * First package with local userhome
    * Added alternative sync-profile-script
