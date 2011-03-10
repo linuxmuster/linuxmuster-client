@@ -6,6 +6,7 @@ linuxmuster-client (0.9.20-14) testing; urgency=low
    * Patching firefox prefs.js in 05_firefox.sh
    * Moved sysdir functionality to mount.d/01_sysfiles.sh
    * Adding nautlilus bookmark for myfiles to HOME/.gtk-bookmarks in 01_sysfiles.sh
+   * Moved mount.d scripts to common/templates
 
  -- Frank Schiebel <frank@linuxmuster.net>  Wed, 02 Mar 2011 15:40:00 +0100
 
