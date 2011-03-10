@@ -55,8 +55,11 @@ if [ "$TEMPLATE_USER" = "$USER" ]; then
 fi
 
 # sync user profile back
+if [ $SYNC_MODE == "alternative" ]; then
+. /usr/share/linuxmuster-client/resync-profile-alternative.sh
+else
 . /usr/share/linuxmuster-client/resync-profile.sh
-
+fi
 # source umount hooks
 umount_hooks
 
