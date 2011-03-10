@@ -5,6 +5,7 @@
 # Frank Schiebel
 #
 
+[ x$DEBUGLOG != "x" ] && echo "Führe 01_sysdirs.sh aus"  >> $DEBUGLOG
 # if user is template user: do nothing and quit
 if [ "$USER" == "$TEMPLATE_USER" ]; then
  [ x$DEBUGLOG != "x" ] && echo "User ist $TEMPLATE_USER - Abbruch"  >> $DEBUGLOG
@@ -43,5 +44,14 @@ fi
 # manage userdirs
 
 # Add nautilus bookmark for MYFILES
-bookmark="file:///$HOME/$MYFILES"
-sed -i "1i$bookmark" $HOME/.gtk-bookmarks
+[ x$DEBUGLOG != "x" ] && echo "Schreibe $HOME/.gtk-bookmarks"  >> $DEBUGLOG
+bookmark="file://$HOME/$SERVER_HOME"
+bookmark="$bookmark\nfile://$HOME/$MYFILES"
+bookmark=${bookmark/ /%20}
+bookmark="$bookmark\nfile://$HOME/Dokumente"
+bookmark="$bookmark\nfile://$HOME/Musik"
+bookmark="$bookmark\nfile://$HOME/Bilder"
+bookmark="$bookmark\nfile://$HOME/Videos"
+bookmark="$bookmark\nfile://$HOME/Downloads"
+#bookmark="$bookmark\nfile:///home/linuxadmin/Dokumente\nfile:///home/linuxadmin/Musik\nfile:///home/linuxadmin/Bilder\nfile:///home/linuxadmin/Videos\nfile:///home/linuxadmin/Downloads"
+echo  -e $bookmark > $HOME/.gtk-bookmarks

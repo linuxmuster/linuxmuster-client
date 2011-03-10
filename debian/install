@@ -6,5 +6,6 @@ hardy/* var/lib/linuxmuster-client/hardy/
 jaunty/*    var/lib/linuxmuster-client/jaunty/
 lucid/*     var/lib/linuxmuster-client/lucid/
 share/* usr/share/linuxmuster-client/
+sbin/* usr/sbin/
 debian/linuxmuster-hostname etc/init.d/
 

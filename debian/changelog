@@ -1,4 +1,4 @@
-linuxmuster-client (0.9.20-15) testing; urgency=low
+linuxmuster-client (0.9.20-16) testing; urgency=low
 
    * First package with local userhome
    * Added alternative sync-profile-script
@@ -7,6 +7,7 @@ linuxmuster-client (0.9.20-15) testing; urgency=low
    * Moved sysdir functionality to mount.d/01_sysfiles.sh
    * Adding nautlilus bookmark for myfiles to HOME/.gtk-bookmarks in 01_sysfiles.sh
    * Moved mount.d scripts to common/templates
+   * Added software install script /usr/sbin/linuxmuster-client-software
 
  -- Frank Schiebel <frank@linuxmuster.net>  Wed, 02 Mar 2011 15:40:00 +0100
 
