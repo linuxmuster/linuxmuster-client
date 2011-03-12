@@ -1,4 +1,4 @@
-linuxmuster-client (0.9.20-20) testing; urgency=low
+linuxmuster-client (0.9.20-21) testing; urgency=low
 
    * First package with local userhome
    * Added alternative sync-profile-script
@@ -9,10 +9,12 @@ linuxmuster-client (0.9.20-20) testing; urgency=low
    * Moved mount.d scripts to common/templates
    * Added software install script /usr/sbin/linuxmuster-client-software
    * Added alternative resync script, modified postsession.sh accordingly
-   * Added pykoticon sourcesm, fixed annoyance that always showed wx.phyton
+   * Added pykoticon sources, fixed annoyance that always showed wx.phyton
      frame in background
+   * Added tools directory to share, skripts for setting up pykota an do a
+     first run over sane settings for the default user
 
- -- Frank Schiebel <frank@linuxmuster.net>  Wed, 02 Mar 2011 15:40:00 +0100
+ -- Frank Schiebel <frank@linuxmuster.net>  Sat, 12 Mar 2011 19:25:00 +0100
 
 linuxmuster-client (0.9.19-0) testing; urgency=low
 
