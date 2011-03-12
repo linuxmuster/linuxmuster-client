@@ -249,7 +249,7 @@ class PyKotIcon(wx.Frame):
         wx.Frame.__init__(self, parent, id, \
                _("PyKotIcon info for %s") % self.getCurrentUserName(), \
                size = (0, 0), \
-               style = wx.FRAME_NO_TASKBAR | wx.NO_FULL_REPAINT_ON_RESIZE)
+               style = wx.FRAME_NO_TASKBAR | wx.NO_FULL_REPAINT_ON_RESIZE  )
                      
     def getCurrentUserName(self) :
         """Retrieves the current user's name."""
@@ -307,14 +307,17 @@ class PyKotIcon(wx.Frame):
         
     def OnAbout(self, event) :    
         """Displays the about box."""
+        self.Show(True)
         dialog = wx.MessageDialog(self, aboutbox % globals(), \
                                         _("About"), \
                                         wx.OK | wx.ICON_INFORMATION)
         dialog.ShowModal()
         dialog.Destroy()
+        self.Hide()
         
     def showDialog(self, message, yesno) :
         """Opens a notification dialog."""
+        self.Show(True)
         self.dialogAnswer = None
         if yesno :
             caption = _("Confirmation")
@@ -326,9 +329,11 @@ class PyKotIcon(wx.Frame):
         dialog = wx.MessageDialog(self, message, caption, style)
         self.dialogAnswer = ((dialog.ShowModal() == wx.ID_NO) and "CANCEL") or "OK"
         dialog.Destroy()
+        self.Hide()
         
     def askDatas(self, labels, varnames, varvalues) :
         """Opens a dialog box asking for data entry."""
+        self.Show(True)
         self.dialogAnswer = None
         dialog = GenericInputDialog(self, wx.ID_ANY, labels, varnames, varvalues)
         retvalues = {}
@@ -342,6 +347,7 @@ class PyKotIcon(wx.Frame):
                 retvalues[k] = ""
         self.dialogAnswer = retvalues
         dialog.Destroy()
+        self.Hide()
         
     def closeServer(self) :    
         """Tells the xml-rpc server to exit."""
