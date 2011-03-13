@@ -1,4 +1,4 @@
-linuxmuster-client (0.9.20-21) testing; urgency=low
+linuxmuster-client (0.9.20-22) testing; urgency=low
 
    * First package with local userhome
    * Added alternative sync-profile-script
@@ -13,6 +13,7 @@ linuxmuster-client (0.9.20-21) testing; urgency=low
      frame in background
    * Added tools directory to share, skripts for setting up pykota an do a
      first run over sane settings for the default user
+   * pykoticon setup tool creates autostart file for gnome
 
  -- Frank Schiebel <frank@linuxmuster.net>  Sat, 12 Mar 2011 19:25:00 +0100
 

@@ -25,7 +25,7 @@ if [ "$USER" != "$TEMPLATE_USER"  -a "$FIREFOX" = "yes" ]; then
 fi
 
 # create it if it was not copied
-[ -d $HOME/$APPS_BASEDIR/$FIREFOX_PROFILE ] || mkdir $HOME/$APPS_BASEDIR/$FIREFOX_PROFILE
+[ -d $HOME/$APPS_BASEDIR/$FIREFOX_PROFILE ] || mkdir -p $HOME/$APPS_BASEDIR/$FIREFOX_PROFILE
 
 fi
 
