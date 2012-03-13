@@ -1,6 +1,7 @@
-linuxmuster-client (0.10.2) testing; urgency=low
+linuxmuster-client (0.10-precise1) testing; urgency=low
 
   * removed multi distribution support
+  * lightdm enabled
 
  -- Frank Schiebel <frank@linuxmuster.net>  Tue, 13 Mar 2012 04:50:59 +0100
 
