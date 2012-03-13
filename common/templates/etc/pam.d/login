@@ -2,24 +2,39 @@
 # The PAM configuration file for the Shadow `login' service
 #
 
+# Enforce a minimal delay in case of failure (in microseconds).
+# (Replaces the `FAIL_DELAY' setting from login.defs)
+# Note that other modules may require another minimal delay. (for example,
+# to disable any delay, you should add the nodelay option to pam_unix)
+auth       optional   pam_faildelay.so  delay=3000000
+
 # Outputs an issue file prior to each login prompt (Replaces the
 # ISSUE_FILE option from login.defs). Uncomment for use
 # auth       required   pam_issue.so issue=/etc/issue
 
 # Disallows root logins except on tty's listed in /etc/securetty
 # (Replaces the `CONSOLE' setting from login.defs)
-auth       requisite  pam_securetty.so
+auth       [success=ok ignore=ignore user_unknown=ignore default=die]  pam_securetty.so
 
 # Disallows other than root logins when /etc/nologin exists
 # (Replaces the `NOLOGINS_FILE' option from login.defs)
 auth       requisite  pam_nologin.so
 
-# This module parses /etc/environment (the standard for setting
-# environ vars) and also allows you to use an extended config
+# SELinux needs to be the first session rule. This ensures that any 
+# lingering context has been cleared. Without out this it is possible 
+# that a module could execute code in the wrong domain.  (When SELinux
+# is disabled, this returns success.)
+session    required   pam_selinux.so close
+
+# This module parses environment configuration file(s)
+# and also allows you to use an extended config
 # file /etc/security/pam_env.conf.
 # 
 # parsing /etc/environment needs "readenv=1"
 session       required   pam_env.so readenv=1
+# locale variables are also kept into /etc/default/locale in etch
+# reading this file *in addition to /etc/environment* does not hurt
+session       required   pam_env.so readenv=1 envfile=/etc/default/locale
 
 # Standard Un*x authentication.
 @include common-auth
@@ -40,10 +55,6 @@ auth       optional   pam_group.so
 # set access limits.
 # (Replaces /etc/login.access file)
 # account  required       pam_access.so
-
-# Standard Un*x account and session
-@include common-account
-@include common-session
 
 # Sets up user limits according to /etc/security/limits.conf
 # (Replaces the use of /etc/limits in old login)
@@ -66,5 +77,15 @@ session    optional   pam_motd.so
 # also removes the user's mail spool file.
 # See comments in /etc/login.defs
 session    optional   pam_mail.so standard
+
+# Standard Un*x account and session
+@include common-account
+@include common-session
 @include common-password
 @include common-pammount
+
+# SELinux needs to intervene at login time to ensure that the process
+# starts in the proper default security context. Only sessions which are
+# intended to run in the user's context should be run after this.  (When
+# SELinux is disabled, this returns success.)
+session required pam_selinux.so open

@@ -1,10 +1,7 @@
 etc/config  etc/linuxmuster-client/
 etc/profile.exclude etc/linuxmuster-client/
 etc/mount.d etc/linuxmuster-client/
-common/*    var/lib/linuxmuster-client/common/
-hardy/* var/lib/linuxmuster-client/hardy/
-jaunty/*    var/lib/linuxmuster-client/jaunty/
-lucid/*     var/lib/linuxmuster-client/lucid/
+common/*     var/lib/linuxmuster-client/common/
 share/* usr/share/linuxmuster-client/
 sbin/* usr/sbin/
 debian/linuxmuster-hostname etc/init.d/

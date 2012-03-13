@@ -1,7 +1,3 @@
-# Do not change this file! It will be overwritten!
-# This configuration file was automatically created by sophomorix-setup-pgldap
-# Last Modification: 2006-10-03_20-43-47
-# $Id: common-account.template,v 1.3 2006/05/08 07:53:39 jeffbeck Exp $
 #
 # /etc/pam.d/common-account - authorization settings common to all services
 #
@@ -10,9 +6,21 @@
 # the central access policy for use on the system.  The default is to
 # only deny service to users whose accounts are expired in /etc/shadow.
 #
-#account	required	pam_unix.so
+# As of pam 1.0.1-6, this file is managed by pam-auth-update by default.
+# To take advantage of this, it is recommended that you configure any
+# local modules either before or after the default block, and use
+# pam-auth-update to manage selection of other modules.  See
+# pam-auth-update(8) for details.
+#
 
-account    sufficient    pam_ldap.so
-account    sufficient    pam_unix.so nullok try_first_pass
-account    required      pam_deny.so
-
+# here are the per-package modules (the "Primary" block)
+account	[success=2 new_authtok_reqd=done default=ignore]	pam_unix.so 
+account	[success=1 default=ignore]	pam_ldap.so 
+# here's the fallback if no module succeeds
+account	requisite			pam_deny.so
+# prime the stack with a positive return value if there isn't one already;
+# this avoids us returning an error just because nothing sets a success code
+# since the modules above will each just jump around
+account	required			pam_permit.so
+# and here are more per-package modules (the "Additional" block)
+# end of pam-auth-update config

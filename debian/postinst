@@ -26,98 +26,70 @@ set -e
 
 case "$1" in
 
-	configure)
+    configure)
 
-		# read default variables
-		. /usr/share/linuxmuster-client/config || exit 1
-		. /usr/share/linuxmuster-client/supported_distros || exit 1
+        # read default variables
+        . /usr/share/linuxmuster-client/config || exit 1
 
-		# check the distribution and do specific stuff
-		binpath=bin
-		cups=cupsys
-		if grep -q "$precise" /etc/issue; then
-			echo "This is $precise!"
-			distro=precise
-			cups=cups
-		if grep -q "$lucid" /etc/issue; then
-			echo "This is $lucid!"
-			distro=lucid
-			cups=cups
-		elif grep -q "$karmic" /etc/issue; then
-			echo "This is $karmic!"
-			distro=karmic
-			cups=cups
-		elif grep -q "$jaunty" /etc/issue; then
-			echo "This is $jaunty!"
-			distro=jaunty
-			cups=cups
-		elif grep -q "$intrepid" /etc/issue; then
-			echo "This is $intrepid!"
-			distro=intrepid
-			cups=cups
-		elif grep -q "$hardy" /etc/issue; then
-			echo "This is $hardy!"
-			distro=hardy
-		else
-			echo "This distribution is not supported!"
-			exit 1
-		fi
+        # check the distribution and do specific stuff
+        binpath=bin
+        cups=cupsys
 
-		# sets hostname for dhclient at boot time
-		update-rc.d linuxmuster-hostname start 40 S .
+        # sets hostname for dhclient at boot time
+        update-rc.d linuxmuster-hostname start 40 S .
 
-		# adding system groups plugdev and nvram
-		for i in plugdev nvram; do
-			if ! grep -q ^${i}: /etc/group; then
-				addgroup --system $i
-			fi
-		done
+        # adding system groups plugdev and nvram
+        for i in plugdev nvram; do
+            if ! grep -q ^${i}: /etc/group; then
+                addgroup --system $i
+            fi
+        done
 
-		# adding administrator to sudoers
-		if [ -e /etc/sudoers ]; then
-			if ! grep -q ^$ADMINISTRATOR /etc/sudoers; then
-				echo "Adding $ADMINISTRATOR to sudoers ..."
-				echo >> /etc/sudoers
-				echo "# linuxmuster: $ADMINISTRATOR may gain root privileges" >> /etc/sudoers
-				echo "$ADMINISTRATOR ALL=(ALL) ALL" >> /etc/sudoers
-			fi
-		fi
+        # adding administrator to sudoers
+        if [ -e /etc/sudoers ]; then
+            if ! grep -q ^$ADMINISTRATOR /etc/sudoers; then
+                echo "Adding $ADMINISTRATOR to sudoers ..."
+                echo >> /etc/sudoers
+                echo "# linuxmuster: $ADMINISTRATOR may gain root privileges" >> /etc/sudoers
+                echo "$ADMINISTRATOR ALL=(ALL) ALL" >> /etc/sudoers
+            fi
+        fi
 
-		# adding cupsys user to shadow group
-		if id cupsys &> /dev/null; then
-			if ! id cupsys | grep -qw shadow; then
-				addgroup cupsys shadow
-			fi
-		fi
+        # adding cupsys user to shadow group
+        if id cupsys &> /dev/null; then
+            if ! id cupsys | grep -qw shadow; then
+                addgroup cupsys shadow
+            fi
+        fi
 
-		# adding printoperators group to cups system groups
-		if grep -q ^SystemGroup /etc/cups/cupsd.conf; then
-			if ! grep ^SystemGroup /etc/cups/cupsd.conf | grep -q $PRINTERADMINS; then
-				echo "Adding group $PRINTERADMINS to cupsd system groups ..."
-				cp /etc/cups/cupsd.conf /etc/cups/cupsd.conf.dpkg-old
-				sed -e "s/^SystemGroup.*/SystemGroup lpadmin $PRINTERADMINS/" /etc/cups/cupsd.conf.dpkg-old > /etc/cups/cupsd.conf
-				/etc/init.d/$cups restart
-			fi
-		fi
+        # adding printoperators group to cups system groups
+        if grep -q ^SystemGroup /etc/cups/cupsd.conf; then
+            if ! grep ^SystemGroup /etc/cups/cupsd.conf | grep -q $PRINTERADMINS; then
+                echo "Adding group $PRINTERADMINS to cupsd system groups ..."
+                cp /etc/cups/cupsd.conf /etc/cups/cupsd.conf.dpkg-old
+                sed -e "s/^SystemGroup.*/SystemGroup lpadmin $PRINTERADMINS/" /etc/cups/cupsd.conf.dpkg-old > /etc/cups/cupsd.conf
+                /etc/init.d/$cups restart
+            fi
+        fi
 
   # configure package
   . /usr/share/linuxmuster-client/configure
 
-		# basedn
-		db_get shared/ldapns/ldap-server || true
-		serverip=$RET
-		if [ -z "$serverip" ]; then
-			echo "Cannot get the ip for the ldap server! Skipping configuration!"
-			exit 0
-		fi
+        # basedn
+        db_get shared/ldapns/ldap-server || true
+        serverip=$RET
+        if [ -z "$serverip" ]; then
+            echo "Cannot get the ip for the ldap server! Skipping configuration!"
+            exit 0
+        fi
 
   # serverip
-		db_get shared/ldapns/base-dn || true
-		basedn=$RET
-		if [ -z "$basedn" ]; then
-			echo "Cannot get ldap basedn! Skipping configuration!"
-			exit 0
-		fi
+        db_get shared/ldapns/base-dn || true
+        basedn=$RET
+        if [ -z "$basedn" ]; then
+            echo "Cannot get ldap basedn! Skipping configuration!"
+            exit 0
+        fi
 
   # template user
   db_get linuxmuster-client/template_user || true
@@ -135,48 +107,45 @@ case "$1" in
   db_get linuxmuster-client/apps_basedir || true
   apps_basedir="$RET"
 
-		# patching configuration files
-		echo "Patching configuration ..."
-		cd /var/lib/linuxmuster-client
-		for i in common $distro; do
-			cd $i/templates
-			find -type f | xargs -i -t sh -c \
-			"sed -e 's%@@studentshome@@%${STUDENTSHOME}%g
-		 					s%@@sharehome@@%${SHAREHOME}%g
-		 					s%@@progsdir@@%${PROGSDIR}%g
-		 					s%@@cdsdir@@%${CDSDIR}%g
-		 					s%@@taskscache@@%${TASKSCACHE}%g
-		 					s%@@backupmntpoint@@%${BACKUPMNTPOINT}%g
-		 					s%@@basedn@@%${basedn}%g
-		 					s%@@binpath@@%${binpath}%g
-		 					s%@@administrator@@%${ADMINISTRATOR}%g
-		 					s%@@pgmadmin@@%${PGMADMIN}%g
-		 					s%@@serverip@@%${serverip}%g' {} > /{}" 2> /dev/null 1> /dev/null
-			cd ../../
-		done
+        # patching configuration files
+        echo "Patching configuration ..."
+        cd /var/lib/linuxmuster-client/common/templates
+            find -type f | xargs -i -t sh -c \
+            "sed -e 's%@@studentshome@@%${STUDENTSHOME}%g
+                            s%@@sharehome@@%${SHAREHOME}%g
+                            s%@@progsdir@@%${PROGSDIR}%g
+                            s%@@cdsdir@@%${CDSDIR}%g
+                            s%@@taskscache@@%${TASKSCACHE}%g
+                            s%@@backupmntpoint@@%${BACKUPMNTPOINT}%g
+                            s%@@basedn@@%${basedn}%g
+                            s%@@binpath@@%${binpath}%g
+                            s%@@administrator@@%${ADMINISTRATOR}%g
+                            s%@@pgmadmin@@%${PGMADMIN}%g
+                            s%@@serverip@@%${serverip}%g' {} > /{}" 2> /dev/null 1> /dev/null
+            cd ../../
 
   # patch package configfile
-	 [ -e $USERCONFIG ] && cp $USERCONFIG $USERCONFIG.dpkg-old
-	 if grep -q ^TEMPLATE_USER $USERCONFIG; then
-		 sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i $USERCONFIG
-	 else
-		 echo "TEMPLATE_USER=$template_user" > $USERCONFIG
-	 fi
- 	if grep -q ^FIREFOX $USERCONFIG; then
-		 sed -e "s|^FIREFOX=.*|FIREFOX=$firefox|" -i $USERCONFIG
-	 else
-		 echo "FIREFOX=$firefox" >> $USERCONFIG
- 	fi
-	 if grep -q ^MYFILES $USERCONFIG; then
-		 sed -e "s|^MYFILES=.*|MYFILES=\"$myfiles\"|" -i $USERCONFIG
-	 else
-		 echo "MYFILES=\"$myfiles\"" > $USERCONFIG
-	 fi
-	 if grep -q ^APPS_BASEDIR $USERCONFIG; then
-		 sed -e "s|^APPS_BASEDIR=.*|APPS_BASEDIR=\"$apps_basedir\"|" -i $USERCONFIG
-	 else
-		 echo "APPS_BASEDIR=\"$apps_basedir\"" > $USERCONFIG
-	 fi
+     [ -e $USERCONFIG ] && cp $USERCONFIG $USERCONFIG.dpkg-old
+     if grep -q ^TEMPLATE_USER $USERCONFIG; then
+         sed -e "s|^TEMPLATE_USER=.*|TEMPLATE_USER=$template_user|" -i $USERCONFIG
+     else
+         echo "TEMPLATE_USER=$template_user" > $USERCONFIG
+     fi
+    if grep -q ^FIREFOX $USERCONFIG; then
+         sed -e "s|^FIREFOX=.*|FIREFOX=$firefox|" -i $USERCONFIG
+     else
+         echo "FIREFOX=$firefox" >> $USERCONFIG
+    fi
+     if grep -q ^MYFILES $USERCONFIG; then
+         sed -e "s|^MYFILES=.*|MYFILES=\"$myfiles\"|" -i $USERCONFIG
+     else
+         echo "MYFILES=\"$myfiles\"" > $USERCONFIG
+     fi
+     if grep -q ^APPS_BASEDIR $USERCONFIG; then
+         sed -e "s|^APPS_BASEDIR=.*|APPS_BASEDIR=\"$apps_basedir\"|" -i $USERCONFIG
+     else
+         echo "APPS_BASEDIR=\"$apps_basedir\"" > $USERCONFIG
+     fi
 
   # fixing ldap.conf to ignore self signed server certificate with queries from localhost
   conffile=/etc/ldap/ldap.conf
@@ -202,44 +171,44 @@ case "$1" in
    fi
   fi
 
-		# remove hal's obsolete mountpolicies
+        # remove hal's obsolete mountpolicies
   cfile=/etc/hal/fdi/policy/mountpolicies.fdi
-		if [ -e "$cfile" ]; then
-			mv $cfile ${cfile}.dpkg-old
-			[ -e /etc/init.d/dbus ] && /etc/init.d/dbus restart
-		fi
+        if [ -e "$cfile" ]; then
+            mv $cfile ${cfile}.dpkg-old
+            [ -e /etc/init.d/dbus ] && /etc/init.d/dbus restart
+        fi
 
-		# remove ivman from Xsession.options
+        # remove ivman from Xsession.options
   cfile=/etc/X11/Xsession.options
-		if [ -s "$cfile" ]; then
-			if grep -q use-session-ivman $cfile; then
-				cp $cfile ${cfile}.dpkg-old
-				grep -v use-session-ivman ${cfile}.dpkg-old > $cfile
-			fi
-		fi
+        if [ -s "$cfile" ]; then
+            if grep -q use-session-ivman $cfile; then
+                cp $cfile ${cfile}.dpkg-old
+                grep -v use-session-ivman ${cfile}.dpkg-old > $cfile
+            fi
+        fi
 
-		# remove ivman's default
+        # remove ivman's default
   cfile=/etc/default/ivman
-		[ -e "$cfile" ] && mv $cfile ${cfile}.dpkg-old
+        [ -e "$cfile" ] && mv $cfile ${cfile}.dpkg-old
 
-		# remove ivman script from dapper
+        # remove ivman script from dapper
   cfile=/etc/X11/ivman-xsession
-		[ -e "$cfile" ] && mv $cfile ${cfile}.dpkg-old
+        [ -e "$cfile" ] && mv $cfile ${cfile}.dpkg-old
 
-		echo "Note: You have to reboot the client if you have installed the package for the first time!"
+        echo "Note: You have to reboot the client if you have installed the package for the first time!"
 
-		;;
+        ;;
 
-	abort-upgrade|abort-remove|abort-deconfigure)
+    abort-upgrade|abort-remove|abort-deconfigure)
 
-		;;
+        ;;
 
-	*)
+    *)
 
-		echo "postinst called with unknown argument \`$1'" >&2
-		exit 1
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
 
-		;;
+        ;;
 
 esac
 
