@@ -2,24 +2,42 @@
 # <schmitt@lmz-bw.de>
 # 12.12.2009
 #
-# mandatory profile directorys
-PROFILE_DIRS="Desktop .config .local .gconf .gconfd .gnome2 .gnome2_private"
 
 # profile template user
 TEMPLATE_USER=linuxadmin
 
+# Sync Mode
+SYNC_MODE="compat"
+
+# mandatory profile directorys, synced from template user to user's local home
+# only active when USERPROFILE_MODE=1
+PROFILE_MANDATORY="Desktop,.local,.config,.nautilus,.gconf,.gconfd,.gnome2,.gnome2_private,.icons,.themes,.emerald,.fontconfig,.compiz"
+
+# mount point for user's server home
+SERVER_HOME="Home_auf_Server"
+
+# my files folder, will be created if necessary on $SERVER_HOME
+MYFILES="Eigene Dateien"
+
+# link in user's local home to $MYFILES
+MYFILES_LINK="Dokumente"
+
+# supplemental user dirs, below $MYFILES, linked to user's local home
+MYFILES_SUPP="Musik,Bilder,Videos,Downloads"
+
 # Basedir for application settings
 APPS_BASEDIR="Einstellungen"
+
+# user profile directorys, linked from user's server home to user's local home
+PROFILE_USER="$APPS_BASEDIR,My GCompris,PDF,.mozilla,.thunderbird,.TrueCrypt,.tsclient,.schoolsplay.rc,.subversion,.ssh,.gnupg,.tuxtype,data,__tauschen"
+
+# user profile directorys, which will be not synced, either local nor from server home
+PROFILE_IGNORE=".ccache,.rnd,.qt,.pulse,.pulse-cookie,.gvfs,.dmrc,.bash*,.cache,.Xauthority,.xsession-errors,.xsession-errors.old,.thumbnails,.esd_auth,.update-notifier,.gstreamer-0.10,.gtk-bookmarks,.recently-used,.recently-used.xbel,.dbus,.VirtualBox,Tauschen,.fishsrv.pl,.sudo_as_admin_successful"
 
 # Firefox
 # copy initial firefox profile from template user to user? (yes|no)
 FIREFOX=yes
+
 # Firefox profile directory, below $APPS_BASEDIR
 FIREFOX_PROFILE=firefox
-
-# my files folder
-MYFILES="Eigene Dateien"
-
-# directories in user's home, which will be linked to /tmp on logon
-LINKDIRS="Desktop .kde .local"
 

@@ -1,15 +1,53 @@
 #
 # copy template user profile
 #
-# 08.11.2009
-# Jörg Richter/Thomas Schmitt
+# 14.10.2010
+# Thomas Schmitt
 #
 
-# get home of template user
-PROFILE_HOME=$(getent passwd $TEMPLATE_USER | awk -F\: '{ print $6 }')
+# sync mandator profile
+if id "$TEMPLATE_USER" &> /dev/null; then
+
+ # get home of template user
+ PROFILE_HOME=$(getent passwd $TEMPLATE_USER | awk -F\: '{ print $6 }')
+ if [ -d "$PROFILE_HOME" ]; then
+
+  
+
+ fi # home of template user
+
+fi # sync mandator profile
+
 
 # create basedir for application settings if necessary
-[ -d $HOME/$APPS_BASEDIR ] || mkdir -p $HOME/$APPS_BASEDIR
+if [ -z "$SERVER_HOME" ]; then
+ [ -d "$HOME/$APPS_BASEDIR" ] || mkdir -p "$HOME/$APPS_BASEDIR"
+else
+ rm -rf "$HOME/$APPS_BASEDIR"
+ mkdir -p "$HOME/$SERVER_HOME/$APPS_BASEDIR"
+ ln -s "$HOME/$SERVER_HOME/$APPS_BASEDIR" "$HOME/$APPS_BASEDIR"
+fi
+
+# only if SERVER_HOME is set
+if [ -n "$SERVER_HOME" ]; then
+ # link user profile dirs from server
+ for i in $HOME/$SERVER_HOME/.*; do
+  profile_dir="$(basename $i)"
+  echo "$PROFILE_DIRS" | grep -qw "$profile_dir" && continue
+  rm -rf "$HOME/$profile_dir"
+  ln -s "$i" "$HOME/$profile_dir"
+ done
+ # manage userdirs
+ mkdir -p "$HOME/$SERVER_HOME/$MYFILES"
+ for i in $MYFILES_SUPP $MYFILES_LINK; do
+  [ -e "$HOME/$i" ] && rm -rf "$HOME/$i"
+ done
+ ln -s "$HOME/$SERVER_HOME/$MYFILES" "$HOME/$MYFILES_LINK"
+ for i in $MYFILES_SUPP; do
+  mkdir -p "$HOME/$SERVER_HOME/$MYFILES/$i"
+  ln -s "$HOME/$SERVER_HOME/$MYFILES/$i" "$HOME/$i"
+ done
+fi
 
 # process firefox profile if requested
 if [ "$FIREFOX" = "yes" ]; then
@@ -45,8 +83,8 @@ if [ "$USER" != "$TEMPLATE_USER" ]; then
  # iterate over profile directories and copy them to users home
  for i in $PROFILE_DIRS; do
   [ -e "$HOME/$i" ] || mkdir -p $HOME/$i
- 	[ -e "$HOME/$i" -a -e "$PROFILE_HOME/$i" ] && rsync -rlpt --inplace --delete --exclude-from /etc/linuxmuster-client/profile.exclude $PROFILE_HOME/$i/ $HOME/$i/
- 	[ -e "$HOME/$i" ] && chown -R $USER $HOME/$i
+  [ -e "$HOME/$i" -a -e "$PROFILE_HOME/$i" ] && rsync -rlpt --inplace --delete --exclude-from /etc/linuxmuster-client/profile.exclude $PROFILE_HOME/$i/ $HOME/$i/
+  [ -e "$HOME/$i" ] && chown -R $USER $HOME/$i
  done
 
  # link my files folder to desktop

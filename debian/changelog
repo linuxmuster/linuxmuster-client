@@ -1,3 +1,28 @@
+linuxmuster-client (0.9.20-22.1) testing; urgency=low
+
+  * First steps with ubuntu 12.04
+
+ -- Frank Schiebel <frank@linuxmuster.net>  Tue, 13 Mar 2012 04:50:59 +0100
+
+linuxmuster-client (0.9.20-22) testing; urgency=low
+
+   * First package with local userhome
+   * Added alternative sync-profile-script
+   * Moved firefox config to mount.d/05_firefox.sh
+   * Patching firefox prefs.js in 05_firefox.sh
+   * Moved sysdir functionality to mount.d/01_sysfiles.sh
+   * Adding nautlilus bookmark for myfiles to HOME/.gtk-bookmarks in 01_sysfiles.sh
+   * Moved mount.d scripts to common/templates
+   * Added software install script /usr/sbin/linuxmuster-client-software
+   * Added alternative resync script, modified postsession.sh accordingly
+   * Added pykoticon sources, fixed annoyance that always showed wx.phyton
+     frame in background
+   * Added tools directory to share, skripts for setting up pykota an do a
+     first run over sane settings for the default user
+   * pykoticon setup tool creates autostart file for gnome
+
+ -- Frank Schiebel <frank@linuxmuster.net>  Sat, 12 Mar 2011 19:25:00 +0100
+
 linuxmuster-client (0.9.19-0) testing; urgency=low
 
   * updated entry for Ubuntu 10.04.x in supported_distros (closes #401).

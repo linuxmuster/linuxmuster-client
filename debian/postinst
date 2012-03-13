@@ -35,6 +35,10 @@ case "$1" in
 		# check the distribution and do specific stuff
 		binpath=bin
 		cups=cupsys
+		if grep -q "$precise" /etc/issue; then
+			echo "This is $precise!"
+			distro=precise
+			cups=cups
 		if grep -q "$lucid" /etc/issue; then
 			echo "This is $lucid!"
 			distro=lucid
