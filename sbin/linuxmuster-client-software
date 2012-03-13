@@ -1,0 +1,40 @@
+#!/bin/bash
+# This script reads packages from a (remote) file and installs them
+# via apt-get
+
+. /usr/share/linuxmuster-client/supported_distros || exit 1
+
+if grep -q "$lucid" /etc/issue; then
+	echo "This is $lucid!"
+	distro=lucid
+elif grep -q "$karmic" /etc/issue; then
+	echo "This is $karmic!"
+	distro=karmic
+elif grep -q "$jaunty" /etc/issue; then
+	echo "This is $jaunty!"
+	distro=jaunty
+elif grep -q "$intrepid" /etc/issue; then
+	echo "This is $intrepid!"
+	distro=intrepid
+elif grep -q "$hardy" /etc/issue; then
+	echo "This is $hardy!"
+	distro=hardy
+else
+	echo "This distribution is not supported!"
+	exit 1
+fi
+
+PFILE="/tmp/$distro.packages"
+
+if [ ! -f $PFILE ]; then 
+	echo "$PFILE does not exist."
+	exit 1
+fi
+
+PACKAGES=`cat $PFILE`
+
+
+for package in $PACKAGES; do
+	apt-cache show $package && apt-get install $package
+done
+

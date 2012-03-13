@@ -1,0 +1,23 @@
+# Include this file in every /etc/pam.d/SERVICE you use for login:
+# [...]
+# @include common-auth
+# @include common-session
+# [...]
+# # added for libpam-mount
+# @include common-pammount
+#
+# Make sure that the common-auth and common-session includes are
+# above the common-pammount include (just as in the example above).
+
+# replace "optional" with "required" if a user must mount the specified
+# volumes, for example the home directory
+
+# make sure that there is no PAM module loaded with a "sufficient"
+# priority before these entries, else the pam_mount module is not
+# executed
+
+# for configuration details about different login programs see
+# /usr/share/doc/libpam-mount/README.Debian.gz
+
+auth       required   pam_mount.so
+session    optional   pam_mount.so
